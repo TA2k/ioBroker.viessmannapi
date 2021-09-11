@@ -1,0 +1,113 @@
+{
+    "common": {
+        "name": "viessmannapi",
+        "version": "2.0.1",
+        "news": {
+            "2.0.1": {
+                "en": "initial release for new API. States are changed.",
+                "de": "Erstveröffentlichung neue API. Datenpunkte haben sich geändert.",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "titleLang": {
+            "en": "Viessmannapi",
+            "de": "Viessmannapi",
+            "ru": "Viessmannapi",
+            "pt": "Viessmannapi",
+            "nl": "Viessmannapi",
+            "fr": "Viessmannapi",
+            "it": "Viessmannapi",
+            "es": "Viessmannapi",
+            "pl": "Viessmannapi",
+            "zh-cn": "Viessmannapi"
+        },
+        "desc": {
+            "en": "Adapter for Viessmannapi Devices with Vitoconnect Box",
+            "de": "Adapter für Viessmannapi Anlagen mit Vitoconnect Box",
+            "ru": "Адаптер для устройств Viessmannapi с Vitoconnect Box",
+            "pt": "Adaptador para dispositivos Viessmannapi com caixa Vitoconnect",
+            "nl": "Adapter voor Viessmannapi-apparaten met Vitoconnect Box",
+            "fr": "Adaptateur pour appareils Viessmannapi avec Vitoconnect Box",
+            "it": "Adattatore per dispositivi Viessmannapi con Vitoconnect Box",
+            "es": "Adaptador para dispositivos Viessmannapi con Vitoconnect Box",
+            "pl": "Adapter do urządzeń Viessmannapi z Vitoconnect Box",
+            "zh-cn": "带有 Vitoconnect 盒的 Viessmannapi 设备适配器"
+        },
+        "authors": [
+            "TA2k <tombox2020@gmail.com>"
+        ],
+        "keywords": [
+            "Viessmannapi"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "viessmannapi.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/TA2k/ioBroker.viessmannapi/master/admin/viessmannapi.png",
+        "readme": "https://github.com/TA2k/ioBroker.viessmannapi/blob/master/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "climate-control",
+        "compact": true,
+        "connectionType": "cloud",
+        "dataSource": "poll",
+        "materialize": true,
+        "dependencies": [
+            {
+                "js-controller": ">=3.0.0"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=4.0.9"
+            }
+        ]
+    },
+    "encryptedNative": [
+        "client_id",
+        "password"
+    ],
+    "protectedNative": [
+        "client_id",
+        "password"
+    ],
+    "native": {
+        "username": "",
+        "password": "",
+        "client_id": "",
+        "interval": 5,
+        "eventInterval": 300
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Device or service connected",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
+}

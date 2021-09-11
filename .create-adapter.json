@@ -1,0 +1,39 @@
+{
+    "cli": true,
+    "adapterName": "viessmannapi",
+    "title": "Viessmannapi",
+    "description": "Adapter for Viessmannapi",
+    "keywords": [
+        "Viessmannapi"
+    ],
+    "expert": "yes",
+    "features": [
+        "adapter"
+    ],
+    "adminFeatures": [],
+    "type": "vehicle",
+    "startMode": "daemon",
+    "connectionType": "cloud",
+    "dataSource": "poll",
+    "connectionIndicator": "yes",
+    "language": "JavaScript",
+    "adminReact": "no",
+    "tools": [
+        "ESLint",
+        "type checking"
+    ],
+    "releaseScript": "no",
+    "devServer": "no",
+    "indentation": "Space (4)",
+    "quotes": "double",
+    "es6class": "yes",
+    "authorName": "TA2k",
+    "authorGithub": "TA2k",
+    "authorEmail": "tombox2020@gmail.com",
+    "gitRemoteProtocol": "HTTPS",
+    "gitCommit": "no",
+    "license": "MIT License",
+    "ci": "gh-actions",
+    "dependabot": "no",
+    "creatorVersion": "1.34.1"
+}
