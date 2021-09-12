@@ -7,6 +7,7 @@
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 const utils = require("@iobroker/adapter-core");
+const rax = require("retry-axios");
 const axios = require("axios");
 const crypto = require("crypto");
 const qs = require("qs");
@@ -40,6 +41,13 @@ class Viessmannapi extends utils.Adapter {
             this.config.eventInterval = 0.5;
         }
         this.requestClient = axios.create();
+        this.requestClient.defaults.raxConfig = {
+            instance: this.requestClient,
+            statusCodesToRetry: [[500, 599]],
+            httpMethodsToRetry: ["POST"],
+        };
+        const interceptorId = rax.attach(this.requestClient);
+
         this.updateInterval = null;
         this.eventInterval = null;
         this.reLoginTimeout = null;
@@ -308,8 +316,8 @@ class Viessmannapi extends utils.Adapter {
                         if (data.length === 1) {
                             data = data[0];
                         }
-                        const extractPath = this.installationId + "." + device.id + "." + element.path;
-                        const forceIndex = null;
+                        let extractPath = this.installationId + "." + device.id + "." + element.path;
+                        let forceIndex = null;
 
                         this.extractKeys(this, extractPath, data, "feature", forceIndex, false, element.desc);
                     })
@@ -483,6 +491,20 @@ class Viessmannapi extends utils.Adapter {
                     url: uriState.val,
                     headers: headers,
                     data: data,
+                    raxConfig: {
+                        retry: 5,
+                        noResponseRetries: 2,
+                        retryDelay: 5000,
+                        backoffType: "static",
+                        statusCodesToRetry: [[500, 599]],
+                        onRetryAttempt: (err) => {
+                            const cfg = rax.getConfig(err);
+                            if (err.response) {
+                                this.log.error(JSON.stringify(err.response.data));
+                            }
+                            this.log.info(`Retry attempt #${cfg.currentRetryAttempt}`);
+                        },
+                    },
                 })
                     .then((res) => {
                         this.log.debug(JSON.stringify(res.data));
