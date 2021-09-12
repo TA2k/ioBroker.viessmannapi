@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "2.0.1",
+        "version": "2.0.2",
         "news": {
+            "2.0.2": {
+                "en": "Add retry on failed setValues",
+                "de": "Wiederholung eingebaut falls setValue fehlschlägt."
+            },
             "2.0.1": {
                 "en": "initial release for new API. States are changed.",
                 "de": "Erstveröffentlichung neue API. Datenpunkte haben sich geändert.",
