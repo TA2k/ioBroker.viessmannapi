@@ -378,7 +378,8 @@ class Viessmannapi extends utils.Adapter {
             .catch((error) => {
                 if (error.response && error.response.status === 401) {
                     error.response && this.log.debug(JSON.stringify(error.response.data));
-                    this.log.info(element.path + " receive 401 error. Refresh Token in 30 seconds");
+
+                    this.log.info("Get Events receive 401 error. Refresh Token in 30 seconds");
                     clearTimeout(this.refreshTokenTimeout);
                     this.refreshTokenTimeout = setTimeout(() => {
                         this.refreshToken();
