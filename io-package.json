@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "2.0.2",
+        "version": "2.0.3",
         "news": {
+            "2.0.3": {
+                "en": "Fix virtual device detection",
+                "de": "Virtuelle Geräteerkennung für Rate Limit verbessert"
+            },
             "2.0.2": {
                 "en": "Add retry on failed setValues",
                 "de": "Wiederholung eingebaut falls setValue fehlschlägt."

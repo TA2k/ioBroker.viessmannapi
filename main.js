@@ -252,7 +252,7 @@ class Viessmannapi extends utils.Adapter {
             .then(async (res) => {
                 this.log.debug(JSON.stringify(res.data));
                 for (const device of res.data.data) {
-                    this.idArray.push({ id: device.id, type: device.roles[0] });
+                    this.idArray.push({ id: device.id, roles: device.roles });
                     await this.setObjectNotExistsAsync(this.installationId + "." + device.id, {
                         type: "device",
                         common: {
@@ -294,7 +294,7 @@ class Viessmannapi extends utils.Adapter {
         this.idArray.forEach((device) => {
             statusArray.forEach(async (element) => {
                 const url = element.url.replace("$id", device.id);
-                if (!ignoreFilter && (device.type === "type:gateway" || device.type === "type:virtual")) {
+                if (!ignoreFilter && (device.roles.includes("type:gateway") || device.roles.includes("type:virtual"))) {
                     this.log.debug("ignore " + device.type);
                     return;
                 }
@@ -316,8 +316,8 @@ class Viessmannapi extends utils.Adapter {
                         if (data.length === 1) {
                             data = data[0];
                         }
-                        let extractPath = this.installationId + "." + device.id + "." + element.path;
-                        let forceIndex = null;
+                        const extractPath = this.installationId + "." + device.id + "." + element.path;
+                        const forceIndex = null;
 
                         this.extractKeys(this, extractPath, data, "feature", forceIndex, false, element.desc);
                     })
