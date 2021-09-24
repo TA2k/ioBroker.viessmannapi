@@ -81,7 +81,7 @@ class Viessmannapi extends utils.Adapter {
         const [code_verifier, codeChallenge] = this.getCodeChallenge();
         const headers = {
             Accept: "*/*",
-            "User-Agent": "ioBroker 2.0.0",
+            "User-Agent": "ioBroker 2.0.3",
         };
         let data = {
             client_id: this.config.client_id,
@@ -182,7 +182,7 @@ class Viessmannapi extends utils.Adapter {
         const headers = {
             "Content-Type": "application/json",
             Accept: "*/*",
-            "User-Agent": "ioBroker 2.0.0",
+            "User-Agent": "ioBroker 2.0.3",
             Authorization: "Bearer " + this.session.access_token,
         };
 
@@ -288,7 +288,7 @@ class Viessmannapi extends utils.Adapter {
         const headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             Accept: "application/json",
-            "User-Agent": "ioBroker 2.0.0",
+            "User-Agent": "ioBroker 2.0.3",
             Authorization: "Bearer " + this.session.access_token,
         };
         this.idArray.forEach((device) => {
@@ -339,6 +339,9 @@ class Viessmannapi extends utils.Adapter {
                             this.log.info(JSON.stringify(error.response.data));
                             this.log.info("Please check the connection of your gateway");
                         }
+                        if (error.response && error.response.status === 504) {
+                            this.log.info("Viessmann API is not available please try again later");
+                        }
                         this.log.error(element.url);
                         this.log.error(error);
                         error.response && this.log.debug(JSON.stringify(error.response.data));
@@ -350,7 +353,7 @@ class Viessmannapi extends utils.Adapter {
         const headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             Accept: "application/json",
-            "User-Agent": "ioBroker 2.0.0",
+            "User-Agent": "ioBroker 2.0.3",
             Authorization: "Bearer " + this.session.access_token,
         };
 
@@ -394,6 +397,9 @@ class Viessmannapi extends utils.Adapter {
                     this.log.info(JSON.stringify(error.response.data));
                     this.log.info("Please check the connection of your gateway");
                 }
+                if (error.response && error.response.status === 504) {
+                    this.log.info("Viessmann API is not available please try again later");
+                }
                 this.log.error("Receiving Events");
                 this.log.error(error);
                 error.response && this.log.debug(JSON.stringify(error.response.data));
@@ -405,6 +411,7 @@ class Viessmannapi extends utils.Adapter {
             method: "post",
             url: "https://iam.viessmann.com/idp/v2/token",
             headers: {
+                "User-Agent": "ioBroker 2.0.3",
                 "Content-Type": "application/x-www-form-urlencoded",
             },
             data: "grant_type=refresh_token&client_id=" + this.config.client_id + "&refresh_token=" + this.session.refresh_token,
@@ -443,6 +450,7 @@ class Viessmannapi extends utils.Adapter {
      */
     onUnload(callback) {
         try {
+            this.setState("info.connection", false, true);
             clearTimeout(this.refreshTimeout);
             clearTimeout(this.reLoginTimeout);
             clearTimeout(this.refreshTokenTimeout);
@@ -485,6 +493,7 @@ class Viessmannapi extends utils.Adapter {
                 const headers = {
                     "Content-Type": "application/json",
                     Accept: "*/*",
+                    "User-Agent": "ioBroker 2.0.3",
                     Authorization: "Bearer " + this.session.access_token,
                 };
                 await this.requestClient({
