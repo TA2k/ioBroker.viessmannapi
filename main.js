@@ -12,6 +12,7 @@ const axios = require("axios");
 const crypto = require("crypto");
 const qs = require("qs");
 const { extractKeys } = require("./lib/extractKeys");
+
 class Viessmannapi extends utils.Adapter {
     /**
      * @param {Partial<utils.AdapterOptions>} [options={}]
@@ -24,6 +25,8 @@ class Viessmannapi extends utils.Adapter {
         this.on("ready", this.onReady.bind(this));
         this.on("stateChange", this.onStateChange.bind(this));
         this.on("unload", this.onUnload.bind(this));
+        this.installationArray = [];
+        this.userAgent = "ioBroker 2.0.4";
     }
 
     /**
@@ -81,7 +84,7 @@ class Viessmannapi extends utils.Adapter {
         const [code_verifier, codeChallenge] = this.getCodeChallenge();
         const headers = {
             Accept: "*/*",
-            "User-Agent": "ioBroker 2.0.3",
+            "User-Agent": this.userAgent,
         };
         let data = {
             client_id: this.config.client_id,
@@ -182,105 +185,70 @@ class Viessmannapi extends utils.Adapter {
         const headers = {
             "Content-Type": "application/json",
             Accept: "*/*",
-            "User-Agent": "ioBroker 2.0.3",
+            "User-Agent": this.userAgent,
             Authorization: "Bearer " + this.session.access_token,
         };
 
-        this.installationId = await this.requestClient({
-            method: "get",
-            url: "https://api.viessmann.com/iot/v1/equipment/installations",
-            headers: headers,
-        })
-            .then(async (res) => {
-                this.log.debug(JSON.stringify(res.data));
-                if (res.data.data && res.data.data.length > 0) {
-                    const installation = res.data.data[0];
-                    const installationId = installation.id.toString();
-                    await this.setObjectNotExistsAsync(installationId, {
-                        type: "device",
-                        common: {
-                            name: installation.description,
-                        },
-                        native: {},
-                    });
-                    this.extractKeys(this, installationId, installation);
-                    return installationId;
-                }
-            })
-            .catch((error) => {
-                this.log.error(error);
-                if (error.response && error.response.status === 429) {
-                    this.log.info("Rate limit reached. Will be reseted next day 02:00");
-                }
-                error.response && this.log.error(JSON.stringify(error.response.data));
-            });
-
-        this.gatewaySerial = await this.requestClient({
-            method: "get",
-            url: "https://api.viessmann.com/iot/v1/equipment/gateways",
-            headers: headers,
-        })
-            .then(async (res) => {
-                this.log.debug(JSON.stringify(res.data));
-                if (res.data.data && res.data.data.length > 0) {
-                    const gateway = res.data.data[0];
-                    const gatewayId = gateway.serial.toString();
-                    await this.setObjectNotExistsAsync(this.installationId + ".installationGateway", {
-                        type: "device",
-                        common: {
-                            name: gatewayId,
-                        },
-                        native: {},
-                    });
-                    this.extractKeys(this, this.installationId + ".installationGateway", gateway);
-                    return gatewayId;
-                }
-            })
-            .catch((error) => {
-                this.log.error(error);
-                if (error.response && error.response.status === 429) {
-                    this.log.info("Rate limit reached. Will be reseted next day 02:00");
-                }
-                error.response && this.log.error(JSON.stringify(error.response.data));
-            });
-
         await this.requestClient({
             method: "get",
-            url: "https://api.viessmann.com/iot/v1/equipment/installations/" + this.installationId + "/gateways/" + this.gatewaySerial + "/devices",
+            url: "https://api.viessmann.com/iot/v1/equipment/installations?includeGateways=true",
             headers: headers,
         })
             .then(async (res) => {
                 this.log.debug(JSON.stringify(res.data));
-                for (const device of res.data.data) {
-                    this.idArray.push({ id: device.id, roles: device.roles });
-                    await this.setObjectNotExistsAsync(this.installationId + "." + device.id, {
-                        type: "device",
-                        common: {
-                            name: device.modelId,
-                        },
-                        native: {},
-                    });
-
-                    await this.setObjectNotExistsAsync(this.installationId + "." + device.id + ".general", {
-                        type: "channel",
-                        common: {
-                            name: "General Device Information",
-                        },
-                        native: {},
-                    });
-
-                    this.extractKeys(this, this.installationId + "." + device.id + ".general", device);
+                if (res.data.data && res.data.data.length > 0) {
+                    this.installationArray = res.data.data;
+                    this.log.info(this.installationArray.length + " installations found.");
+                    for (let installation of this.installationArray) {
+                        const installationId = installation.id.toString();
+                        await this.setObjectNotExistsAsync(installationId, {
+                            type: "device",
+                            common: {
+                                name: installation.description,
+                            },
+                            native: {},
+                        });
+                        this.extractKeys(this, installationId, installation, null, true);
+                    }
+                } else {
+                    this.log.info("No installation found");
                 }
             })
             .catch((error) => {
                 this.log.error(error);
+                if (error.response && error.response.status === 429) {
+                    this.log.info("Rate limit reached. Will be reseted next day 02:00");
+                }
+                error.response && this.log.error(JSON.stringify(error.response.data));
             });
+        for (const installation of this.installationArray) {
+            const installationId = installation.id.toString();
+            for (const device of installation.gateways[0].devices) {
+                await this.setObjectNotExistsAsync(installationId + "." + device.id, {
+                    type: "device",
+                    common: {
+                        name: device.modelId,
+                    },
+                    native: {},
+                });
+
+                await this.setObjectNotExistsAsync(installationId + "." + device.id + ".general", {
+                    type: "channel",
+                    common: {
+                        name: "General Device Information",
+                    },
+                    native: {},
+                });
+
+                this.extractKeys(this, installationId + "." + device.id + ".general", device);
+            }
+        }
     }
     async updateDevices(ignoreFilter) {
         const statusArray = [
             {
                 path: "features",
-                url: "https://api.viessmann.com/iot/v1/equipment/installations/" + this.installationId + "/gateways/" + this.gatewaySerial + "/devices/$id/features",
+                url: "https://api.viessmann.com/iot/v1/equipment/installations/$installation/gateways/$gateway/devices/$id/features",
                 desc: "Features and States of the device",
             },
         ];
@@ -288,64 +256,71 @@ class Viessmannapi extends utils.Adapter {
         const headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             Accept: "application/json",
-            "User-Agent": "ioBroker 2.0.3",
+            "User-Agent": this.userAgent,
             Authorization: "Bearer " + this.session.access_token,
         };
-        this.idArray.forEach((device) => {
-            statusArray.forEach(async (element) => {
-                const url = element.url.replace("$id", device.id);
-                if (!ignoreFilter && (device.roles.includes("type:gateway") || device.roles.includes("type:virtual"))) {
-                    this.log.debug("ignore " + device.type);
-                    return;
-                }
-                await this.requestClient({
-                    method: "get",
-                    url: url,
-                    headers: headers,
-                })
-                    .then((res) => {
-                        this.log.debug(url + " " + device.id + " " + JSON.stringify(res.data));
-                        if (!res.data) {
-                            return;
-                        }
-                        let data = res.data;
-                        const keys = Object.keys(res.data);
-                        if (keys.length === 1) {
-                            data = res.data[keys[0]];
-                        }
-                        if (data.length === 1) {
-                            data = data[0];
-                        }
-                        const extractPath = this.installationId + "." + device.id + "." + element.path;
-                        const forceIndex = null;
-
-                        this.extractKeys(this, extractPath, data, "feature", forceIndex, false, element.desc);
+        this.installationArray.forEach((installation) => {
+            if (!installation["gateways"][0]) {
+                return;
+            }
+            installation["gateways"][0]["devices"].forEach((device) => {
+                statusArray.forEach(async (element) => {
+                    let url = element.url.replace("$id", device.id);
+                    url = url.replace("$installation", installation.id);
+                    url = url.replace("$gateway", device.gatewaySerial);
+                    if (!ignoreFilter && (device.roles.includes("type:gateway") || device.roles.includes("type:virtual"))) {
+                        this.log.debug("ignore " + device.type);
+                        return;
+                    }
+                    await this.requestClient({
+                        method: "get",
+                        url: url,
+                        headers: headers,
                     })
-                    .catch((error) => {
-                        if (error.response && error.response.status === 401) {
-                            error.response && this.log.debug(JSON.stringify(error.response.data));
-                            this.log.info(element.path + " receive 401 error. Refresh Token in 30 seconds");
-                            clearTimeout(this.refreshTokenTimeout);
-                            this.refreshTokenTimeout = setTimeout(() => {
-                                this.refreshToken();
-                            }, 1000 * 30);
+                        .then((res) => {
+                            this.log.debug(url + " " + device.id + " " + JSON.stringify(res.data));
+                            if (!res.data) {
+                                return;
+                            }
+                            let data = res.data;
+                            const keys = Object.keys(res.data);
+                            if (keys.length === 1) {
+                                data = res.data[keys[0]];
+                            }
+                            if (data.length === 1) {
+                                data = data[0];
+                            }
+                            const extractPath = installation.id + "." + device.id + "." + element.path;
+                            const forceIndex = null;
 
-                            return;
-                        }
-                        if (error.response && error.response.status === 429) {
-                            this.log.info("Rate limit reached. Will be reseted next day 02:00");
-                        }
-                        if (error.response && error.response.status === 502) {
-                            this.log.info(JSON.stringify(error.response.data));
-                            this.log.info("Please check the connection of your gateway");
-                        }
-                        if (error.response && error.response.status === 504) {
-                            this.log.info("Viessmann API is not available please try again later");
-                        }
-                        this.log.error(element.url);
-                        this.log.error(error);
-                        error.response && this.log.debug(JSON.stringify(error.response.data));
-                    });
+                            this.extractKeys(this, extractPath, data, "feature", forceIndex, false, element.desc);
+                        })
+                        .catch((error) => {
+                            if (error.response && error.response.status === 401) {
+                                error.response && this.log.debug(JSON.stringify(error.response.data));
+                                this.log.info(element.path + " receive 401 error. Refresh Token in 30 seconds");
+                                clearTimeout(this.refreshTokenTimeout);
+                                this.refreshTokenTimeout = setTimeout(() => {
+                                    this.refreshToken();
+                                }, 1000 * 30);
+
+                                return;
+                            }
+                            if (error.response && error.response.status === 429) {
+                                this.log.info("Rate limit reached. Will be reseted next day 02:00");
+                            }
+                            if (error.response && error.response.status === 502) {
+                                this.log.info(JSON.stringify(error.response.data));
+                                this.log.info("Please check the connection of your gateway");
+                            }
+                            if (error.response && error.response.status === 504) {
+                                this.log.info("Viessmann API is not available please try again later");
+                            }
+                            this.log.error(element.url);
+                            this.log.error(error);
+                            error.response && this.log.debug(JSON.stringify(error.response.data));
+                        });
+                });
             });
         });
     }
@@ -353,57 +328,63 @@ class Viessmannapi extends utils.Adapter {
         const headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             Accept: "application/json",
-            "User-Agent": "ioBroker 2.0.3",
+            "User-Agent": this.userAgent,
             Authorization: "Bearer " + this.session.access_token,
         };
-
-        await this.requestClient({
-            method: "get",
-            url: "https://api.viessmann.com/iot/v1/events-history/events?gatewaySerial=" + this.gatewaySerial + "&installationId=" + this.installationId,
-            headers: headers,
-        })
-            .then((res) => {
-                this.log.debug(JSON.stringify(res.data));
-                if (!res.data) {
-                    return;
-                }
-                let data = res.data;
-                const keys = Object.keys(res.data);
-                if (keys.length === 1) {
-                    data = res.data[keys[0]];
-                }
-                if (data.length === 1) {
-                    data = data[0];
-                }
-
-                this.extractKeys(this, this.installationId + ".events", data, null, true);
+        for (const installation of this.installationArray) {
+            const installationId = installation.id.toString();
+            if (!installation["gateways"][0]) {
+                return;
+            }
+            const gatewaySerial = installation["gateways"][0].serial.toString();
+            await this.requestClient({
+                method: "get",
+                url: "https://api.viessmann.com/iot/v1/events-history/events?gatewaySerial=" + gatewaySerial + "&installationId=" + installationId,
+                headers: headers,
             })
-            .catch((error) => {
-                if (error.response && error.response.status === 401) {
+                .then((res) => {
+                    this.log.debug(JSON.stringify(res.data));
+                    if (!res.data) {
+                        return;
+                    }
+                    let data = res.data;
+                    const keys = Object.keys(res.data);
+                    if (keys.length === 1) {
+                        data = res.data[keys[0]];
+                    }
+                    if (data.length === 1) {
+                        data = data[0];
+                    }
+
+                    this.extractKeys(this, installationId + ".events", data, null, true);
+                })
+                .catch((error) => {
+                    if (error.response && error.response.status === 401) {
+                        error.response && this.log.debug(JSON.stringify(error.response.data));
+
+                        this.log.info("Get Events receive 401 error. Refresh Token in 30 seconds");
+                        clearTimeout(this.refreshTokenTimeout);
+                        this.refreshTokenTimeout = setTimeout(() => {
+                            this.refreshToken();
+                        }, 1000 * 30);
+
+                        return;
+                    }
+                    if (error.response && error.response.status === 429) {
+                        this.log.info("Rate limit reached. Will be reseted next day 02:00");
+                    }
+                    if (error.response && error.response.status === 502) {
+                        this.log.info(JSON.stringify(error.response.data));
+                        this.log.info("Please check the connection of your gateway");
+                    }
+                    if (error.response && error.response.status === 504) {
+                        this.log.info("Viessmann API is not available please try again later");
+                    }
+                    this.log.error("Receiving Events");
+                    this.log.error(error);
                     error.response && this.log.debug(JSON.stringify(error.response.data));
-
-                    this.log.info("Get Events receive 401 error. Refresh Token in 30 seconds");
-                    clearTimeout(this.refreshTokenTimeout);
-                    this.refreshTokenTimeout = setTimeout(() => {
-                        this.refreshToken();
-                    }, 1000 * 30);
-
-                    return;
-                }
-                if (error.response && error.response.status === 429) {
-                    this.log.info("Rate limit reached. Will be reseted next day 02:00");
-                }
-                if (error.response && error.response.status === 502) {
-                    this.log.info(JSON.stringify(error.response.data));
-                    this.log.info("Please check the connection of your gateway");
-                }
-                if (error.response && error.response.status === 504) {
-                    this.log.info("Viessmann API is not available please try again later");
-                }
-                this.log.error("Receiving Events");
-                this.log.error(error);
-                error.response && this.log.debug(JSON.stringify(error.response.data));
-            });
+                });
+        }
     }
 
     async refreshToken() {
@@ -411,7 +392,7 @@ class Viessmannapi extends utils.Adapter {
             method: "post",
             url: "https://iam.viessmann.com/idp/v2/token",
             headers: {
-                "User-Agent": "ioBroker 2.0.3",
+                "User-Agent": this.userAgent,
                 "Content-Type": "application/x-www-form-urlencoded",
             },
             data: "grant_type=refresh_token&client_id=" + this.config.client_id + "&refresh_token=" + this.session.refresh_token,
@@ -493,7 +474,7 @@ class Viessmannapi extends utils.Adapter {
                 const headers = {
                     "Content-Type": "application/json",
                     Accept: "*/*",
-                    "User-Agent": "ioBroker 2.0.3",
+                    "User-Agent": this.userAgent,
                     Authorization: "Bearer " + this.session.access_token,
                 };
                 await this.requestClient({

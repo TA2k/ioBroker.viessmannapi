@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "2.0.3",
+        "version": "2.0.4",
         "news": {
-            "2.0.3": {
+            "2.0.4": {
                 "en": "Fix virtual device detection",
                 "de": "Virtuelle Geräteerkennung für Rate Limit verbessert"
             },
@@ -69,6 +69,11 @@
         "connectionType": "cloud",
         "dataSource": "poll",
         "materialize": true,
+        "plugins": {
+            "sentry": {
+                "dsn": "https://d5990d8661fb46988e641bca0e3d4e38@sentry.iobroker.net/147"
+            }
+        },
         "dependencies": [
             {
                 "js-controller": ">=3.0.0"
