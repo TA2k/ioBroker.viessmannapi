@@ -452,6 +452,10 @@ class Viessmannapi extends utils.Adapter {
     async onStateChange(id, state) {
         if (state) {
             if (!state.ack) {
+                if (id.indexOf(".setValue") === -1) {
+                    this.log.info("please use setValue Object to set values");
+                    return;
+                }
                 const deviceId = id.split(".")[2];
                 const parentPath = id.split(".").slice(1, -1).slice(1).join(".");
 
