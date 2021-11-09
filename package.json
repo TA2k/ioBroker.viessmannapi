@@ -1,6 +1,6 @@
 {
   "name": "iobroker.viessmannapi",
-  "version": "2.0.4",
+  "version": "2.0.6",
   "description": "Adapter for Viessmannapi",
   "author": {
     "name": "TA2k",
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^2.5.1",
-    "axios": "^0.21.1",
+    "axios": "^0.24.0",
     "json-bigint": "^1.0.0",
     "qs": "^6.10.1",
     "retry-axios": "^2.6.0"

@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "2.0.4",
+        "version": "2.0.6",
         "news": {
+            "2.0.6": {
+                "en": "Save schedules values as json",
+                "de": "Schedule Werte werden direkt als JSON gespeichert"
+            },
             "2.0.4": {
                 "en": "Fix virtual device detection",
                 "de": "Virtuelle Geräteerkennung für Rate Limit verbessert"
