@@ -199,7 +199,7 @@ class Viessmannapi extends utils.Adapter {
                 if (res.data.data && res.data.data.length > 0) {
                     this.installationArray = res.data.data;
                     this.log.info(this.installationArray.length + " installations found.");
-                    for (let installation of this.installationArray) {
+                    for (const installation of this.installationArray) {
                         const installationId = installation.id.toString();
                         await this.setObjectNotExistsAsync(installationId, {
                             type: "device",
@@ -492,10 +492,10 @@ class Viessmannapi extends utils.Adapter {
                         retryDelay: 5000,
                         backoffType: "static",
                         statusCodesToRetry: [[500, 599]],
-                        onRetryAttempt: (err) => {
-                            const cfg = rax.getConfig(err);
-                            if (err.response) {
-                                this.log.error(JSON.stringify(err.response.data));
+                        onRetryAttempt: (error) => {
+                            const cfg = rax.getConfig(error);
+                            if (error.response) {
+                                this.log.error(JSON.stringify(error.response.data));
                             }
                             this.log.info(`Retry attempt #${cfg.currentRetryAttempt}`);
                         },
@@ -509,6 +509,10 @@ class Viessmannapi extends utils.Adapter {
                         this.log.error(error);
                         if (error.response) {
                             this.log.error(JSON.stringify(error.response.data));
+                        }
+                        if (error.response && error.response.data && error.response.data.extendedPayload && error.response.data.extendedPayload.code === 404) {
+                            this.log.error("Command not exist please. Please delete objects manually and restart the adapter");
+                            return;
                         }
                         this.log.error("URL: " + uriState.val);
                         this.log.error("Data: " + JSON.stringify(data));
