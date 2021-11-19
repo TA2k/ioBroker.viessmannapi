@@ -142,9 +142,14 @@ class Viessmannapi extends utils.Adapter {
                 }
                 if (error.response && error.response.status === 500) {
                     this.log.info("Please check username and password.");
+                    return;
                 }
                 if (error.request) {
                     this.log.debug(JSON.stringify(error.request._currentUrl));
+                    if (!error.request._currentUrl) {
+                        this.log.error(JSON.stringify(error));
+                        return;
+                    }
                     code = qs.parse(error.request._currentUrl.split("?")[1]).code;
                     this.log.debug(code);
                     return code;
