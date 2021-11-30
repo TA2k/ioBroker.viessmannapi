@@ -323,7 +323,7 @@ class Viessmannapi extends utils.Adapter {
                             }
                             this.log.error(element.url);
                             this.log.error(error);
-                            error.response && this.log.debug(JSON.stringify(error.response.data));
+                            error.response && this.log.error(JSON.stringify(error.response.data));
                         });
                 });
             });
