@@ -1,8 +1,14 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "2.0.6",
+        "version": "2.0.8",
         "news": {
+            "2.0.8": {
+                "en": "add error 500 description"
+            },
+            "2.0.7": {
+                "en": "Bugfixes"
+            },
             "2.0.6": {
                 "en": "Save schedules values as json",
                 "de": "Schedule Werte werden direkt als JSON gespeichert"

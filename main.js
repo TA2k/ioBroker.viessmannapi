@@ -314,8 +314,11 @@ class Viessmannapi extends utils.Adapter {
                             if (error.response && error.response.status === 429) {
                                 this.log.info("Rate limit reached. Will be reseted next day 02:00");
                             }
+                            if (error.response && error.response.status === 500) {
+                                this.log.info("Error 500. ViessmanAPI not available because of unstable server. Please contact Viessmann and ask them to improve their server");
+                                return;
+                            }
                             if (error.response && error.response.status === 502) {
-                                this.log.info(JSON.stringify(error.response.data));
                                 this.log.info("Please check the connection of your gateway");
                             }
                             if (error.response && error.response.status === 504) {
