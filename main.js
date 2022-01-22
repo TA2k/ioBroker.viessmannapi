@@ -204,7 +204,7 @@ class Viessmannapi extends utils.Adapter {
                 if (res.data.data && res.data.data.length > 0) {
                     this.installationArray = res.data.data;
                     this.log.info(this.installationArray.length + " installations found.");
-                    for (const installation of this.installationArray) {
+                    for (let installation of this.installationArray) {
                         const installationId = installation.id.toString();
                         await this.setObjectNotExistsAsync(installationId, {
                             type: "device",
@@ -228,6 +228,13 @@ class Viessmannapi extends utils.Adapter {
             });
         for (const installation of this.installationArray) {
             const installationId = installation.id.toString();
+            if (installation.gateways.length > 1) {
+                this.log.info("More than one gateway found.");
+                this.log.info("Filter out offline gateways.");
+                installation.gateways = installation.gateways.filter((gateway) => {
+                    return gateway.aggregatedStatus !== "Offline";
+                });
+            }
             for (const device of installation.gateways[0].devices) {
                 await this.setObjectNotExistsAsync(installationId + "." + device.id, {
                     type: "device",
