@@ -229,11 +229,12 @@ class Viessmannapi extends utils.Adapter {
         for (const installation of this.installationArray) {
             const installationId = installation.id.toString();
             if (installation.gateways.length > 1) {
-                this.log.info("More than one gateway found.");
+                this.log.info("Found " + installation.gateways.length + " gateways for installation ");
                 this.log.info("Filter out offline gateways.");
                 installation.gateways = installation.gateways.filter((gateway) => {
                     return gateway.aggregatedStatus !== "Offline";
                 });
+                this.log.info("Found " + installation.gateways.length + " online gateways select first gateway.");
             }
             for (const device of installation.gateways[0].devices) {
                 await this.setObjectNotExistsAsync(installationId + "." + device.id, {
