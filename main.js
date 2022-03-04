@@ -478,19 +478,35 @@ class Viessmannapi extends utils.Adapter {
                 const uriState = await this.getStateAsync(parentPath + ".uri");
                 const idState = await this.getObjectAsync(parentPath + ".setValue");
 
+                const data = {};
+
                 const param = idState.common.param;
+				if (param) {
+					if (typeof param !== 'object' || !Array.isArray(param)) {
+						data[param] = state.val;
+						if (!isNaN(state.val)) {
+							data[param] = Number(state.val);
+						}
+					} else {
+						let stateval = JSON.parse(state.val);
+						for (let entry of param) {
+							if (typeof stateval[entry.param] !== 'undefined') {
+								data[entry.param] = stateval[entry.param];
+								if (!isNaN(data[entry.param])) {
+									data[entry.param] = Number(data[entry.param]);
+								}
+							}
+						}
+					}
+				}
 
                 if (!uriState || !uriState.val) {
                     this.log.info("No URI found");
                     return;
                 }
-                const data = {};
-                if (param) {
-                    data[param] = state.val;
-                    if (!isNaN(state.val)) {
-                        data[param] = Number(state.val);
-                    }
-                }
+
+				this.log.debug('Data to send: ' + JSON.stringify(data));
+				
                 const headers = {
                     "Content-Type": "application/json",
                     Accept: "*/*",
