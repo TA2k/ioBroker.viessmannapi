@@ -488,14 +488,19 @@ class Viessmannapi extends utils.Adapter {
                             data[param] = Number(state.val);
                         }
                     } else {
-                        const stateval = JSON.parse(state.val);
-                        for (const entry of param) {
-                            if (typeof stateval[entry.param] !== "undefined") {
-                                data[entry.param] = stateval[entry.param];
-                                if (!isNaN(data[entry.param])) {
-                                    data[entry.param] = Number(data[entry.param]);
+                        try {
+                            const stateval = JSON.parse(state.val);
+                            for (const entry of param) {
+                                if (typeof stateval[entry.param] !== "undefined") {
+                                    data[entry.param] = stateval[entry.param];
+                                    if (!isNaN(data[entry.param])) {
+                                        data[entry.param] = Number(data[entry.param]);
+                                    }
                                 }
                             }
+                        } catch (error) {
+                            this.log.error(error);
+                            this.log.info(`Please use a valid JSON: {"slope": x, "shift": y}`);
                         }
                     }
                 }
