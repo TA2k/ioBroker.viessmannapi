@@ -204,7 +204,7 @@ class Viessmannapi extends utils.Adapter {
                 if (res.data.data && res.data.data.length > 0) {
                     this.installationArray = res.data.data;
                     this.log.info(this.installationArray.length + " installations found.");
-                    for (let installation of this.installationArray) {
+                    for (const installation of this.installationArray) {
                         const installationId = installation.id.toString();
                         await this.setObjectNotExistsAsync(installationId, {
                             type: "device",
@@ -481,32 +481,32 @@ class Viessmannapi extends utils.Adapter {
                 const data = {};
 
                 const param = idState.common.param;
-				if (param) {
-					if (typeof param !== 'object' || !Array.isArray(param)) {
-						data[param] = state.val;
-						if (!isNaN(state.val)) {
-							data[param] = Number(state.val);
-						}
-					} else {
-						let stateval = JSON.parse(state.val);
-						for (let entry of param) {
-							if (typeof stateval[entry.param] !== 'undefined') {
-								data[entry.param] = stateval[entry.param];
-								if (!isNaN(data[entry.param])) {
-									data[entry.param] = Number(data[entry.param]);
-								}
-							}
-						}
-					}
-				}
+                if (param) {
+                    if (typeof param !== "object" || !Array.isArray(param)) {
+                        data[param] = state.val;
+                        if (!isNaN(state.val)) {
+                            data[param] = Number(state.val);
+                        }
+                    } else {
+                        const stateval = JSON.parse(state.val);
+                        for (const entry of param) {
+                            if (typeof stateval[entry.param] !== "undefined") {
+                                data[entry.param] = stateval[entry.param];
+                                if (!isNaN(data[entry.param])) {
+                                    data[entry.param] = Number(data[entry.param]);
+                                }
+                            }
+                        }
+                    }
+                }
 
                 if (!uriState || !uriState.val) {
                     this.log.info("No URI found");
                     return;
                 }
 
-				this.log.debug('Data to send: ' + JSON.stringify(data));
-				
+                this.log.debug("Data to send: " + JSON.stringify(data));
+
                 const headers = {
                     "Content-Type": "application/json",
                     Accept: "*/*",
