@@ -1,8 +1,11 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "2.0.8",
+        "version": "2.0.9",
         "news": {
+            "2.0.9": {
+                "en": "add setValue for curve values"
+            },
             "2.0.8": {
                 "en": "add error 500 description"
             },
