@@ -25,7 +25,7 @@ Name: iobroker
 
 **Google reCAPTCHA deaktivieren**
 
-URI: http://localhost:4200/
+URI: http://localhost:4200
 
 Die Client ID in die Einstellungen kopieren
 
