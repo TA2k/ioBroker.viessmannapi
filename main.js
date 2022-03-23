@@ -109,6 +109,9 @@ class Viessmannapi extends utils.Adapter {
                 this.log.error(error);
                 if (error.response) {
                     this.log.error(JSON.stringify(error.response.data));
+                    if (error.response.data.error && error.response.data.error === "Invalid redirection URI.") {
+                        this.log.error("Please add / at the end of the redirect URI in viessman app settings: http://localhost:4200/");
+                    }
                 }
             });
         if (!htmlLoginForm) {
@@ -154,6 +157,8 @@ class Viessmannapi extends utils.Adapter {
                     this.log.debug(code);
                     return code;
                 }
+                this.log.error("No code after login found please relogin");
+                return;
             });
         data = {
             grant_type: "authorization_code",
@@ -327,6 +332,7 @@ class Viessmannapi extends utils.Adapter {
                                 return;
                             }
                             if (error.response && error.response.status === 502) {
+                                this.log.info(JSON.stringify(error.response.data));
                                 this.log.info("Please check the connection of your gateway");
                             }
                             if (error.response && error.response.status === 504) {
