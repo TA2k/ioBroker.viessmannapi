@@ -97,7 +97,7 @@ class Viessmannapi extends utils.Adapter {
 
         const htmlLoginForm = await this.requestClient({
             method: "get",
-            url: "https://iam.viessmann.com/idp/v2/authorize",
+            url: "https://iam.viessmann.com/idp/v3/authorize",
             headers: headers,
             params: data,
         })
@@ -110,7 +110,9 @@ class Viessmannapi extends utils.Adapter {
                 if (error.response) {
                     this.log.error(JSON.stringify(error.response.data));
                     if (error.response.data.error && error.response.data.error === "Invalid redirection URI.") {
-                        this.log.error("Please add / at the end of the redirect URI in viessman app settings: http://localhost:4200/");
+                        this.log.error(
+                            "Please add / at the end of the redirect URI in viessman app settings: http://localhost:4200/",
+                        );
                     }
                 }
             });
@@ -134,7 +136,9 @@ class Viessmannapi extends utils.Adapter {
         })
             .then((res) => {
                 this.log.debug(JSON.stringify(res.data));
-                this.log.error("Please check username/password and deactivated Google Captcha in the Viessmann Settings");
+                this.log.error(
+                    "Please check username/password and deactivated Google Captcha in the Viessmann Settings",
+                );
                 return res.data;
             })
             .catch((error) => {
@@ -170,7 +174,7 @@ class Viessmannapi extends utils.Adapter {
 
         await this.requestClient({
             method: "post",
-            url: "https://iam.viessmann.com/idp/v2/token",
+            url: "https://iam.viessmann.com/idp/v3/token",
             headers: headers,
             data: qs.stringify(data),
         })
@@ -266,7 +270,7 @@ class Viessmannapi extends utils.Adapter {
         const statusArray = [
             {
                 path: "features",
-                url: "https://api.viessmann.com/iot/v1/equipment/installations/$installation/gateways/$gateway/devices/$id/features",
+                url: "https://api.viessmann.com/iot/v1/features/installations/$installation/gateways/{gatewaySerial}/devices/$id/features",
                 desc: "Features and States of the device",
             },
         ];
@@ -286,7 +290,10 @@ class Viessmannapi extends utils.Adapter {
                     let url = element.url.replace("$id", device.id);
                     url = url.replace("$installation", installation.id);
                     url = url.replace("$gateway", device.gatewaySerial);
-                    if (!ignoreFilter && (device.roles.includes("type:gateway") || device.roles.includes("type:virtual"))) {
+                    if (
+                        !ignoreFilter &&
+                        (device.roles.includes("type:gateway") || device.roles.includes("type:virtual"))
+                    ) {
                         this.log.debug("ignore " + device.type);
                         return;
                     }
@@ -328,7 +335,9 @@ class Viessmannapi extends utils.Adapter {
                                 this.log.info("Rate limit reached. Will be reseted next day 02:00");
                             }
                             if (error.response && error.response.status === 500) {
-                                this.log.info("Error 500. ViessmanAPI not available because of unstable server. Please contact Viessmann and ask them to improve their server");
+                                this.log.info(
+                                    "Error 500. ViessmanAPI not available because of unstable server. Please contact Viessmann and ask them to improve their server",
+                                );
                                 return;
                             }
                             if (error.response && error.response.status === 502) {
@@ -361,7 +370,11 @@ class Viessmannapi extends utils.Adapter {
             const gatewaySerial = installation["gateways"][0].serial.toString();
             await this.requestClient({
                 method: "get",
-                url: "https://api.viessmann.com/iot/v1/events-history/events?gatewaySerial=" + gatewaySerial + "&installationId=" + installationId,
+                url:
+                    "https://api.viessmann.com/iot/v1/events-history/events?gatewaySerial=" +
+                    gatewaySerial +
+                    "&installationId=" +
+                    installationId,
                 headers: headers,
             })
                 .then((res) => {
@@ -412,12 +425,16 @@ class Viessmannapi extends utils.Adapter {
     async refreshToken() {
         await this.requestClient({
             method: "post",
-            url: "https://iam.viessmann.com/idp/v2/token",
+            url: "https://iam.viessmann.com/idp/v3/token",
             headers: {
                 "User-Agent": this.userAgent,
                 "Content-Type": "application/x-www-form-urlencoded",
             },
-            data: "grant_type=refresh_token&client_id=" + this.config.client_id + "&refresh_token=" + this.session.refresh_token,
+            data:
+                "grant_type=refresh_token&client_id=" +
+                this.config.client_id +
+                "&refresh_token=" +
+                this.session.refresh_token,
         })
             .then((res) => {
                 this.log.debug(JSON.stringify(res.data));
@@ -553,8 +570,15 @@ class Viessmannapi extends utils.Adapter {
                         if (error.response) {
                             this.log.error(JSON.stringify(error.response.data));
                         }
-                        if (error.response && error.response.data && error.response.data.extendedPayload && error.response.data.extendedPayload.code === 404) {
-                            this.log.error("Command not exist please. Please delete objects manually and restart the adapter");
+                        if (
+                            error.response &&
+                            error.response.data &&
+                            error.response.data.extendedPayload &&
+                            error.response.data.extendedPayload.code === 404
+                        ) {
+                            this.log.error(
+                                "Command not exist please. Please delete objects manually and restart the adapter",
+                            );
                             return;
                         }
                         this.log.error("URL: " + uriState.val);
