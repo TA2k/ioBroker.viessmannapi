@@ -289,7 +289,7 @@ class Viessmannapi extends utils.Adapter {
                 statusArray.forEach(async (element) => {
                     let url = element.url.replace("$id", device.id);
                     url = url.replace("$installation", installation.id);
-                    url = url.replace("$gateway", device.gatewaySerial);
+                    url = url.replace("$gatewaySerial", device.gatewaySerial);
                     if (
                         !ignoreFilter &&
                         (device.roles.includes("type:gateway") || device.roles.includes("type:virtual"))
@@ -347,7 +347,7 @@ class Viessmannapi extends utils.Adapter {
                             if (error.response && error.response.status === 504) {
                                 this.log.info("Viessmann API is not available please try again later");
                             }
-                            this.log.error(element.url);
+                            this.log.error(url);
                             this.log.error(error);
                             error.response && this.log.error(JSON.stringify(error.response.data));
                         });
