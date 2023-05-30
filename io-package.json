@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "2.0.9",
+        "version": "2.1.0",
         "news": {
+            "2.1.0": {
+                "en": "update to new api endpoint",
+                "de": "Update auf neue API Endpunkte"
+            },
             "2.0.9": {
                 "en": "add setValue for curve values"
             },
@@ -62,12 +66,8 @@
             "pl": "Adapter do urządzeń Viessmannapi z Vitoconnect Box",
             "zh-cn": "带有 Vitoconnect 盒的 Viessmannapi 设备适配器"
         },
-        "authors": [
-            "TA2k <tombox2020@gmail.com>"
-        ],
-        "keywords": [
-            "Viessmannapi"
-        ],
+        "authors": ["TA2k <tombox2020@gmail.com>"],
+        "keywords": ["Viessmannapi"],
         "license": "MIT",
         "platform": "Javascript/Node.js",
         "main": "main.js",
@@ -98,14 +98,8 @@
             }
         ]
     },
-    "encryptedNative": [
-        "client_id",
-        "password"
-    ],
-    "protectedNative": [
-        "client_id",
-        "password"
-    ],
+    "encryptedNative": ["client_id", "password"],
+    "protectedNative": ["client_id", "password"],
     "native": {
         "username": "",
         "password": "",
