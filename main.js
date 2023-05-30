@@ -371,10 +371,9 @@ class Viessmannapi extends utils.Adapter {
             await this.requestClient({
                 method: "get",
                 url:
-                    "https://api.viessmann.com/iot/v1/events-history/events?gatewaySerial=" +
-                    gatewaySerial +
-                    "&installationId=" +
-                    installationId,
+                    "https://api.viessmann.com/iot/v2/events-history/installations/" +
+                    installationId +
+                    "/events",
                 headers: headers,
             })
                 .then((res) => {
