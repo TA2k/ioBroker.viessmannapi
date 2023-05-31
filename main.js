@@ -270,7 +270,7 @@ class Viessmannapi extends utils.Adapter {
         const statusArray = [
             {
                 path: "features",
-                url: "https://api.viessmann.com/iot/v1/features/installations/$installation/gateways/{gatewaySerial}/devices/$id/features",
+                url: "https://api.viessmann.com/iot/v1/features/installations/$installation/gateways/$gatewaySerial/devices/$id/features",
                 desc: "Features and States of the device",
             },
         ];
