@@ -70,7 +70,11 @@
             <!-- For example columns with settings: -->
             <div class="row">
                 <div class="col s6 input-field">
-                    Visit <a href="https://app.developer.viessmann.com" target="_blank">https://app.developer.viessmann.com</a> and create a new client. <br /><br />
+                    Visit
+                    <a href="https://app.developer.viessmann.com" target="_blank"
+                        >https://app.developer.viessmann.com</a
+                    >
+                    and create a new client. <br /><br />
                     Name: iobroker<br />
                     Google reCAPTCHA deaktivieren<br />
                     Redirect URI: http://localhost:4200/<br />
@@ -109,6 +113,13 @@
                 <div class="col s6 input-field">
                     <input type="number" class="value" id="eventInterval" />
                     <label for="eventInterval" class="translate">Update gateway events in minutes</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s6 input-field">
+                    <input type="number" class="value" id="gatewayIndex" />
+                    <label for="gatewayIndex" class="translate">Index of Which Gateway shall be use.</label>
                 </div>
             </div>
         </div>
