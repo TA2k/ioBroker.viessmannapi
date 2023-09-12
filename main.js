@@ -8,7 +8,7 @@
 // you need to create an adapter
 const utils = require("@iobroker/adapter-core");
 const rax = require("retry-axios");
-const axios = require("axios");
+const axios = require("axios").default;
 const crypto = require("crypto");
 const qs = require("qs");
 const { extractKeys } = require("./lib/extractKeys");
@@ -27,6 +27,21 @@ class Viessmannapi extends utils.Adapter {
         this.on("unload", this.onUnload.bind(this));
         this.installationArray = [];
         this.userAgent = "ioBroker 2.0.4";
+        this.requestClient = axios.create();
+        this.requestClient.defaults.raxConfig = {
+            instance: this.requestClient,
+            statusCodesToRetry: [[500, 599]],
+            httpMethodsToRetry: ["POST"],
+        };
+        const interceptorId = rax.attach(this.requestClient);
+        this.updateInterval = null;
+        this.eventInterval = null;
+        this.reLoginTimeout = null;
+        this.refreshTokenTimeout = null;
+        this.extractKeys = extractKeys;
+        this.idArray = [];
+        this.session = {};
+        this.rangeMapSupport = {};
     }
 
     /**
@@ -43,22 +58,6 @@ class Viessmannapi extends utils.Adapter {
             this.log.info("Set interval to minimum 0.5");
             this.config.eventInterval = 0.5;
         }
-        this.requestClient = axios.create();
-        this.requestClient.defaults.raxConfig = {
-            instance: this.requestClient,
-            statusCodesToRetry: [[500, 599]],
-            httpMethodsToRetry: ["POST"],
-        };
-        const interceptorId = rax.attach(this.requestClient);
-
-        this.updateInterval = null;
-        this.eventInterval = null;
-        this.reLoginTimeout = null;
-        this.refreshTokenTimeout = null;
-        this.extractKeys = extractKeys;
-        this.idArray = [];
-        this.session = {};
-        this.rangeMapSupport = {};
 
         this.subscribeStates("*");
 
@@ -288,12 +287,15 @@ class Viessmannapi extends utils.Adapter {
             "User-Agent": this.userAgent,
             Authorization: "Bearer " + this.session.access_token,
         };
-        this.installationArray.forEach((installation) => {
-            if (!installation["gateways"][0]) {
+
+        for (const installation of this.installationArray) {
+            if (!installation["gateways"][this.config.gatewayIndex - 1]) {
+                this.log.warn("No gateway found for installation " + installation.id);
                 return;
             }
-            installation["gateways"][0]["devices"].forEach((device) => {
-                statusArray.forEach(async (element) => {
+
+            for (const device of installation["gateways"][this.config.gatewayIndex - 1]["devices"]) {
+                for (const element of statusArray) {
                     let url = element.url.replace("$id", device.id);
                     url = url.replace("$installation", installation.id);
                     url = url.replace("$gatewaySerial", device.gatewaySerial);
@@ -331,7 +333,7 @@ class Viessmannapi extends utils.Adapter {
                             if (error.response && error.response.status === 401) {
                                 error.response && this.log.debug(JSON.stringify(error.response.data));
                                 this.log.info(element.path + " receive 401 error. Refresh Token in 30 seconds");
-                                clearTimeout(this.refreshTokenTimeout);
+                                this.refreshTokenTimeout && clearTimeout(this.refreshTokenTimeout);
                                 this.refreshTokenTimeout = setTimeout(() => {
                                     this.refreshToken();
                                 }, 1000 * 30);
@@ -358,9 +360,9 @@ class Viessmannapi extends utils.Adapter {
                             this.log.error(error);
                             error.response && this.log.error(JSON.stringify(error.response.data));
                         });
-                });
-            });
-        });
+                }
+            }
+        }
     }
     async getEvents() {
         const headers = {
@@ -371,10 +373,14 @@ class Viessmannapi extends utils.Adapter {
         };
         for (const installation of this.installationArray) {
             const installationId = installation.id.toString();
-            if (!installation["gateways"][0]) {
+
+            if (!installation["gateways"][this.config.gatewayIndex - 1]) {
+                this.log.warn(
+                    "No gateway found for installation " + installation.id + "and index " + this.config.gatewayIndex,
+                );
                 return;
             }
-            const gatewaySerial = installation["gateways"][0].serial.toString();
+            const gatewaySerial = installation["gateways"][this.config.gatewayIndex - 1].serial.toString();
             await this.requestClient({
                 method: "get",
                 url: "https://api.viessmann.com/iot/v2/events-history/installations/" + installationId + "/events",
@@ -401,7 +407,7 @@ class Viessmannapi extends utils.Adapter {
                         error.response && this.log.debug(JSON.stringify(error.response.data));
 
                         this.log.info("Get Events receive 401 error. Refresh Token in 30 seconds");
-                        clearTimeout(this.refreshTokenTimeout);
+                        this.refreshTokenTimeout && clearTimeout(this.refreshTokenTimeout);
                         this.refreshTokenTimeout = setTimeout(() => {
                             this.refreshToken();
                         }, 1000 * 30);
@@ -475,10 +481,10 @@ class Viessmannapi extends utils.Adapter {
         try {
             this.setState("info.connection", false, true);
             clearTimeout(this.refreshTimeout);
-            clearTimeout(this.reLoginTimeout);
-            clearTimeout(this.refreshTokenTimeout);
-            clearInterval(this.updateInterval);
-            clearInterval(this.eventInterval);
+            this.reLoginTimeout && clearTimeout(this.reLoginTimeout);
+            this.refreshTokenTimeout && clearTimeout(this.refreshTokenTimeout);
+            this.updateInterval && clearInterval(this.updateInterval);
+            this.eventInterval && clearInterval(this.eventInterval);
             clearInterval(this.refreshTokenInterval);
             callback();
         } catch (e) {
@@ -560,7 +566,7 @@ class Viessmannapi extends utils.Adapter {
                             if (error.response) {
                                 this.log.error(JSON.stringify(error.response.data));
                             }
-                            this.log.info(`Retry attempt #${cfg.currentRetryAttempt}`);
+                            cfg && this.log.info(`Retry attempt #${cfg.currentRetryAttempt}`);
                         },
                     },
                 })
