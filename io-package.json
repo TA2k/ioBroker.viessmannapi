@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "2.2.0",
+        "version": "2.2.1",
         "news": {
-            "2.2.0": {
+            "2.2.1": {
                 "en": "fix device role detection and id parsing",
                 "de": "Rolen Erkennung und ID Parsing verbessert"
             },
