@@ -305,7 +305,7 @@ class Viessmannapi extends utils.Adapter {
                             return role.includes("type:gateway") || role.includes("type:virtual");
                         })
                     ) {
-                        this.log.debug("ignore " + device.device.deviceType);
+                        this.log.debug("ignore " + device.deviceType);
                         continue;
                     }
                     await this.requestClient({
