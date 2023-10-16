@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "2.1.1",
+        "version": "2.2.0",
         "news": {
+            "2.2.0": {
+                "en": "fix device role detection and id parsing",
+                "de": "Rolen Erkennung und ID Parsing verbessert"
+            },
             "2.1.1": {
                 "en": "update to new api endpoint",
                 "de": "Update auf neue API Endpunkte"
