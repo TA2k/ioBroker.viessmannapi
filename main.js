@@ -244,10 +244,10 @@ class Viessmannapi extends utils.Adapter {
                 });
                 this.log.warn(
                     "Found " +
-                        installation.gateways.length +
-                        " online gateways select " +
-                        this.config.gatewayIndex +
-                        " gateway.",
+                    installation.gateways.length +
+                    " online gateways select " +
+                    this.config.gatewayIndex +
+                    " gateway.",
                 );
             }
             const gateway = installation.gateways[this.config.gatewayIndex - 1];
@@ -299,67 +299,68 @@ class Viessmannapi extends utils.Adapter {
                     let url = element.url.replace("$id", device.id);
                     url = url.replace("$installation", installation.id);
                     url = url.replace("$gatewaySerial", device.gatewaySerial);
+                    let ignore = false;
                     if (
                         !ignoreFilter &&
-                        (device.roles.includes("type:gateway") || device.roles.includes("type:virtual"))
+                        (device.roles.some(str => str.includes("type:gateway")) || device.roles.some(str => str.includes("type:virtual")))
                     ) {
-                        this.log.debug("ignore " + device.type);
-                        return;
+                        this.log.debug("ignore " + device.deviceType);
+                        ignore = true;
                     }
-                    await this.requestClient({
-                        method: "get",
-                        url: url,
-                        headers: headers,
-                    })
-                        .then((res) => {
-                            this.log.debug(url + " " + device.id + " " + JSON.stringify(res.data));
-                            if (!res.data) {
-                                return;
-                            }
-                            let data = res.data;
-                            const keys = Object.keys(res.data);
-                            if (keys.length === 1) {
-                                data = res.data[keys[0]];
-                            }
-                            if (data.length === 1) {
-                                data = data[0];
-                            }
-                            const extractPath = installation.id + "." + device.id + "." + element.path;
-                            const forceIndex = null;
-
-                            this.extractKeys(this, extractPath, data, "feature", forceIndex, false, element.desc);
+                    if (!ignore) {
+                        await this.requestClient({
+                            method: "get",
+                            url: url,
+                            headers: headers,
                         })
-                        .catch((error) => {
-                            if (error.response && error.response.status === 401) {
-                                error.response && this.log.debug(JSON.stringify(error.response.data));
-                                this.log.info(element.path + " receive 401 error. Refresh Token in 30 seconds");
-                                this.refreshTokenTimeout && clearTimeout(this.refreshTokenTimeout);
-                                this.refreshTokenTimeout = setTimeout(() => {
-                                    this.refreshToken();
-                                }, 1000 * 30);
-
-                                return;
-                            }
-                            if (error.response && error.response.status === 429) {
-                                this.log.info("Rate limit reached. Will be reseted next day 02:00");
-                            }
-                            if (error.response && error.response.status === 500) {
-                                this.log.info(
-                                    "Error 500. ViessmanAPI not available because of unstable server. Please contact Viessmann and ask them to improve their server",
-                                );
-                                return;
-                            }
-                            if (error.response && error.response.status === 502) {
-                                this.log.info(JSON.stringify(error.response.data));
-                                this.log.info("Please check the connection of your gateway");
-                            }
-                            if (error.response && error.response.status === 504) {
-                                this.log.info("Viessmann API is not available please try again later");
-                            }
-                            this.log.error(url);
-                            this.log.error(error);
-                            error.response && this.log.error(JSON.stringify(error.response.data));
-                        });
+                            .then((res) => {
+                                this.log.debug(url + " " + device.id + " " + JSON.stringify(res.data));
+                                if (!res.data) {
+                                    return;
+                                }
+                                let data = res.data;
+                                const keys = Object.keys(res.data);
+                                if (keys.length === 1) {
+                                    data = res.data[keys[0]];
+                                }
+                                if (data.length === 1) {
+                                    data = data[0];
+                                }
+                                const extractPath = installation.id + "." + device.id + "." + element.path;
+                                const forceIndex = null;
+                                this.extractKeys(this, extractPath, data, "feature", forceIndex, false, element.desc);
+                            })
+                            .catch((error) => {
+                                if (error.response && error.response.status === 401) {
+                                    error.response && this.log.debug(JSON.stringify(error.response.data));
+                                    this.log.info(element.path + " receive 401 error. Refresh Token in 30 seconds");
+                                    this.refreshTokenTimeout && clearTimeout(this.refreshTokenTimeout);
+                                    this.refreshTokenTimeout = setTimeout(() => {
+                                        this.refreshToken();
+                                    }, 1000 * 30);
+                                    return;
+                                }
+                                if (error.response && error.response.status === 429) {
+                                    this.log.info("Rate limit reached. Will be reseted next day 02:00");
+                                }
+                                if (error.response && error.response.status === 500) {
+                                    this.log.info(
+                                        "Error 500. ViessmanAPI not available because of unstable server. Please contact Viessmann and ask them to improve their server",
+                                    );
+                                    return;
+                                }
+                                if (error.response && error.response.status === 502) {
+                                    this.log.info(JSON.stringify(error.response.data));
+                                    this.log.info("Please check the connection of your gateway");
+                                }
+                                if (error.response && error.response.status === 504) {
+                                    this.log.info("Viessmann API is not available please try again later");
+                                }
+                                this.log.error(url);
+                                this.log.error(error);
+                                error.response && this.log.error(JSON.stringify(error.response.data));
+                            });
+                    }
                 }
             }
         }
