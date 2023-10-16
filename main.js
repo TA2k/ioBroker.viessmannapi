@@ -301,10 +301,12 @@ class Viessmannapi extends utils.Adapter {
                     url = url.replace("$gatewaySerial", device.gatewaySerial);
                     if (
                         !ignoreFilter &&
-                        (device.roles.includes("type:gateway") || device.roles.includes("type:virtual"))
+                        device.roles.some((role) => {
+                            return role.includes("type:gateway") || role.includes("type:virtual");
+                        })
                     ) {
-                        this.log.debug("ignore " + device.type);
-                        return;
+                        this.log.debug("ignore " + device.device.deviceType);
+                        continue;
                     }
                     await this.requestClient({
                         method: "get",
