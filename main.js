@@ -124,7 +124,6 @@ class Viessmannapi extends utils.Adapter {
             isiwebuserid: this.config.username,
             "hidden-password": "00",
             isiwebpasswd: this.config.password,
-            stayloggedin: "Stay+logged+on",
             submit: "LOGIN",
         };
         const code = await this.requestClient({
@@ -132,6 +131,9 @@ class Viessmannapi extends utils.Adapter {
             url: url,
             headers: headers,
             data: qs.stringify(data),
+            raxConfig: {
+                retry: 0,
+            },
         })
             .then((res) => {
                 this.log.debug(JSON.stringify(res.data));
