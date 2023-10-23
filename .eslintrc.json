@@ -5,36 +5,38 @@
         "node": true,
         "mocha": true
     },
-    "extends": [
-        "eslint:recommended"
-    ],
+    "extends": ["eslint:recommended"],
     "plugins": [],
     "rules": {
         "indent": [
             "error",
-            4,
+            2,
             {
                 "SwitchCase": 1
             }
         ],
         "no-console": "off",
+        "no-unused-vars": [
+            "error",
+            {
+                "ignoreRestSiblings": true,
+                "argsIgnorePattern": "^_"
+            }
+        ],
         "no-var": "error",
         "no-trailing-spaces": "error",
         "prefer-const": "error",
         "quotes": [
             "error",
-            "double",
+            "single",
             {
                 "avoidEscape": true,
                 "allowTemplateLiterals": true
             }
         ],
-        "semi": [
-            "error",
-            "always"
-        ]
+        "semi": ["error", "always"]
     },
     "parserOptions": {
-        "ecmaVersion": 2018
+        "ecmaVersion": 2020
     }
 }
