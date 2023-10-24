@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "viessmannapi",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "news": {
-      "2.3.0": {
+      "2.3.1": {
         "en": "Fix Login flow",
         "de": "Login Flow gefixt"
       },
