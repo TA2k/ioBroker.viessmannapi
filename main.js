@@ -81,9 +81,11 @@ class Viessmannapi extends utils.Adapter {
   }
   async login() {
     const [code_verifier, codeChallenge] = this.getCodeChallenge();
+
     const headers = {
       Accept: '*/*',
       'User-Agent': this.userAgent,
+      Authorization: 'Basic ' + Buffer.from(this.config.username + ':' + this.config.password).toString('base64'),
     };
     let data = {
       client_id: this.config.client_id,
@@ -94,7 +96,7 @@ class Viessmannapi extends utils.Adapter {
       redirect_uri: 'http://localhost:4200/',
     };
 
-    const htmlLoginForm = await this.requestClient({
+    const code = await this.requestClient({
       method: 'get',
       url: 'https://iam.viessmann.com/idp/v3/authorize',
       headers: headers,
@@ -105,63 +107,21 @@ class Viessmannapi extends utils.Adapter {
         return res.data;
       })
       .catch((error) => {
+        if (error.request._currentUrl) {
+          this.log.debug(error.request._currentUrl);
+          const parsedParams = qs.parse(error.request._currentUrl.split('?')[1]);
+          if (parsedParams.code) {
+            return parsedParams.code;
+          }
+          this.log.error(error.request._currentUrl.split('?')[1]);
+        }
         this.log.error(error);
         if (error.response) {
           this.log.error(JSON.stringify(error.response.data));
           if (error.response.data.error && error.response.data.error === 'Invalid redirection URI.') {
-            this.log.error(
-              'Please add / at the end of the redirect URI in viessman app settings: http://localhost:4200/',
-            );
+            this.log.error('Please add / at the end of the redirect URI in viessman app settings: http://localhost:4200/');
           }
         }
-      });
-    if (!htmlLoginForm) {
-      return;
-    }
-    let url = htmlLoginForm.split('action="')[1].split('" auto')[0];
-    url = url.replace(/&amp;/g, '&');
-    data = {
-      isiwebuserid: this.config.username,
-      'hidden-password': '00',
-      isiwebpasswd: this.config.password,
-      submit: 'LOGIN',
-    };
-    const code = await this.requestClient({
-      method: 'post',
-      url: url,
-      headers: headers,
-      data: qs.stringify(data),
-      raxConfig: {
-        retry: 0,
-      },
-    })
-      .then((res) => {
-        this.log.debug(JSON.stringify(res.data));
-        this.log.error('Please check username/password and deactivated Google Captcha in the Viessmann Settings');
-        return res.data;
-      })
-      .catch((error) => {
-        let code = '';
-        if (error.response && error.response.status === 400) {
-          this.log.error(JSON.stringify(error.response.data));
-          return;
-        }
-        if (error.response && error.response.status === 500) {
-          this.log.info('Please check username and password.');
-          return;
-        }
-        if (error.request) {
-          this.log.debug(JSON.stringify(error.request._currentUrl));
-          if (!error.request._currentUrl) {
-            this.log.error(JSON.stringify(error));
-            return;
-          }
-          code = qs.parse(error.request._currentUrl.split('?')[1]).code;
-          this.log.debug(code);
-          return code;
-        }
-        this.log.error('No code after login found please relogin');
-        return;
       });
     data = {
       grant_type: 'authorization_code',
@@ -170,7 +130,7 @@ class Viessmannapi extends utils.Adapter {
       code_verifier: code_verifier,
       redirect_uri: 'http://localhost:4200/',
     };
-
+    delete headers.Authorization;
     await this.requestClient({
       method: 'post',
       url: 'https://iam.viessmann.com/idp/v3/token',
@@ -242,9 +202,7 @@ class Viessmannapi extends utils.Adapter {
         installation.gateways = installation.gateways.filter((gateway) => {
           return gateway.aggregatedStatus !== 'Offline';
         });
-        this.log.warn(
-          'Found ' + installation.gateways.length + ' online gateways select ' + this.config.gatewayIndex + ' gateway.',
-        );
+        this.log.warn('Found ' + installation.gateways.length + ' online gateways select ' + this.config.gatewayIndex + ' gateway.');
       }
       const gateway = installation.gateways[this.config.gatewayIndex - 1];
       for (const device of gateway.devices) {
@@ -343,7 +301,7 @@ class Viessmannapi extends utils.Adapter {
               }
               if (error.response && error.response.status === 500) {
                 this.log.info(
-                  'Error 500. ViessmanAPI not available because of unstable server. Please contact Viessmann and ask them to improve their server',
+                  'Error 500. ViessmanAPI not available because of unstable server. Please contact Viessmann and ask them to improve their server'
                 );
                 return;
               }
@@ -435,8 +393,7 @@ class Viessmannapi extends utils.Adapter {
         'User-Agent': this.userAgent,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      data:
-        'grant_type=refresh_token&client_id=' + this.config.client_id + '&refresh_token=' + this.session.refresh_token,
+      data: 'grant_type=refresh_token&client_id=' + this.config.client_id + '&refresh_token=' + this.session.refresh_token,
     })
       .then((res) => {
         this.log.debug(JSON.stringify(res.data));
@@ -572,12 +529,7 @@ class Viessmannapi extends utils.Adapter {
             if (error.response) {
               this.log.error(JSON.stringify(error.response.data));
             }
-            if (
-              error.response &&
-              error.response.data &&
-              error.response.data.extendedPayload &&
-              error.response.data.extendedPayload.code === 404
-            ) {
+            if (error.response && error.response.data && error.response.data.extendedPayload && error.response.data.extendedPayload.code === 404) {
               this.log.error('Command not exist please. Please delete objects manually and restart the adapter');
               return;
             }
