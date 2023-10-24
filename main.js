@@ -119,7 +119,9 @@ class Viessmannapi extends utils.Adapter {
         if (error.response) {
           this.log.error(JSON.stringify(error.response.data));
           if (error.response.data.error && error.response.data.error === 'Invalid redirection URI.') {
-            this.log.error('Please add / at the end of the redirect URI in viessman app settings: http://localhost:4200/');
+            this.log.error(
+              'Please add / at the end of the redirect URI in viessman app settings: http://localhost:4200/',
+            );
           }
         }
       });
@@ -184,7 +186,7 @@ class Viessmannapi extends utils.Adapter {
             this.extractKeys(this, installationId, installation, null, true);
           }
         } else {
-          this.log.info('No installation found');
+          this.log.info('No installation found. Please connect your device with your Viessmann account');
         }
       })
       .catch((error) => {
@@ -202,7 +204,9 @@ class Viessmannapi extends utils.Adapter {
         installation.gateways = installation.gateways.filter((gateway) => {
           return gateway.aggregatedStatus !== 'Offline';
         });
-        this.log.warn('Found ' + installation.gateways.length + ' online gateways select ' + this.config.gatewayIndex + ' gateway.');
+        this.log.warn(
+          'Found ' + installation.gateways.length + ' online gateways select ' + this.config.gatewayIndex + ' gateway.',
+        );
       }
       const gateway = installation.gateways[this.config.gatewayIndex - 1];
       for (const device of gateway.devices) {
@@ -301,7 +305,7 @@ class Viessmannapi extends utils.Adapter {
               }
               if (error.response && error.response.status === 500) {
                 this.log.info(
-                  'Error 500. ViessmanAPI not available because of unstable server. Please contact Viessmann and ask them to improve their server'
+                  'Error 500. ViessmanAPI not available because of unstable server. Please contact Viessmann and ask them to improve their server',
                 );
                 return;
               }
@@ -393,7 +397,8 @@ class Viessmannapi extends utils.Adapter {
         'User-Agent': this.userAgent,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      data: 'grant_type=refresh_token&client_id=' + this.config.client_id + '&refresh_token=' + this.session.refresh_token,
+      data:
+        'grant_type=refresh_token&client_id=' + this.config.client_id + '&refresh_token=' + this.session.refresh_token,
     })
       .then((res) => {
         this.log.debug(JSON.stringify(res.data));
@@ -529,7 +534,12 @@ class Viessmannapi extends utils.Adapter {
             if (error.response) {
               this.log.error(JSON.stringify(error.response.data));
             }
-            if (error.response && error.response.data && error.response.data.extendedPayload && error.response.data.extendedPayload.code === 404) {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.extendedPayload &&
+              error.response.data.extendedPayload.code === 404
+            ) {
               this.log.error('Command not exist please. Please delete objects manually and restart the adapter');
               return;
             }

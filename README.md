@@ -113,7 +113,7 @@ setState("viessmannapi.0.xxxxxxx.0.features.ventilation.schedule.commands.setSch
 
 ## Changelog
 
-### 2.3.1
+### 2.3.2
 
 - (TA2k) Fix Login flow
 
