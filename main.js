@@ -273,6 +273,7 @@ class Viessmannapi extends utils.Adapter {
             this.log.debug('ignore ' + device.deviceType);
             continue;
           }
+          this.log.debug('Start Update for ' + device.id);
           await this.requestClient({
             method: 'get',
             url: url,
