@@ -253,6 +253,13 @@ class Viessmannapi extends utils.Adapter {
       }
 
       for (const device of installation['gateways'][this.config.gatewayIndex - 1]['devices']) {
+        if (this.config.devicelist) {
+          const deviceArray = this.config.devicelist.replace(/\s/g, '').split(',');
+          if (!deviceArray.includes(device.id.toString())) {
+            this.log.debug('ignore for update: ' + device.id);
+            continue;
+          }
+        }
         for (const element of statusArray) {
           let url = element.url.replace('$id', device.id);
           url = url.replace('$installation', installation.id);
@@ -303,9 +310,11 @@ class Viessmannapi extends utils.Adapter {
               if (error.response && error.response.status === 429) {
                 this.log.info('Rate limit reached. Will be reseted next day 02:00');
               }
-              if (error.response && error.response.status === 500) {
+              if (error.response && error.response.status >= 500) {
                 this.log.info(
-                  'Error 500. ViessmanAPI not available because of unstable server. Please contact Viessmann and ask them to improve their server',
+                  'Error ' +
+                    error.response.status +
+                    '. ViessmanAPI not available because of unstable server. Please contact Viessmann and ask them to improve their server',
                 );
                 return;
               }

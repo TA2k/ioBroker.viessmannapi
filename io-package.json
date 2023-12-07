@@ -113,7 +113,8 @@
     "client_id": "",
     "interval": 5,
     "eventInterval": 300,
-    "gatewayIndex": 1
+    "gatewayIndex": 1,
+    "devicelist": ""
   },
   "objects": [],
   "instanceObjects": [
