@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "viessmannapi",
-    "version": "2.3.2",
+    "version": "2.4.0",
     "news": {
+      "2.4.0": {
+        "en": "Add allow list to prevent rate limit with ViCare Einzelraumsteuerung",
+        "de": "Eine Allow-Liste hinzugefügt um das Ratelimit bei Aktivierung der ViCare Einzelraumsteuerung zu verhindern"
+      },
       "2.3.2": {
         "en": "Fix Login flow",
         "de": "Login Flow gefixt"
