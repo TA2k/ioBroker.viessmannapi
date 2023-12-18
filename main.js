@@ -267,7 +267,12 @@ class Viessmannapi extends utils.Adapter {
           if (
             !ignoreFilter &&
             device.roles.some((role) => {
-              return role.includes('type:gateway') || role.includes('type:virtual');
+              if (role.includes('type:gateway')) {
+                return true;
+              }
+              if (role.includes('type:virtual') && !this.config.allowVirtual) {
+                return true;
+              }
             })
           ) {
             this.log.debug('ignore ' + device.deviceType);
