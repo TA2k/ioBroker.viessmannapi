@@ -117,6 +117,12 @@ class Viessmannapi extends utils.Adapter {
         }
         this.log.error(error);
         if (error.response) {
+          if (error.response.data && error.response.data.error_description === 'Client not registered.') {
+            this.log.error(
+              'Cannot find clientId in the viessmann Account. Please wait 15min if the clientId is new and try again',
+            );
+          }
+
           this.log.error(JSON.stringify(error.response.data));
           if (error.response.data.error && error.response.data.error === 'Invalid redirection URI.') {
             this.log.error(
@@ -209,6 +215,11 @@ class Viessmannapi extends utils.Adapter {
         );
       }
       const gateway = installation.gateways[this.config.gatewayIndex - 1];
+      if (!gateway) {
+        this.log.warn('No gateway found for installation ' + installation.id + 'and index ' + this.config.gatewayIndex);
+        this.log.info(JSON.stringify(installation.gateways));
+        return;
+      }
       for (const device of gateway.devices) {
         await this.setObjectNotExistsAsync(installationId + '.' + device.id, {
           type: 'device',
