@@ -42,6 +42,7 @@ class Viessmannapi extends utils.Adapter {
     this.idArray = [];
     this.session = {};
     this.rangeMapSupport = {};
+    this.gateWayIndexOject = {};
   }
 
   /**
@@ -205,6 +206,8 @@ class Viessmannapi extends utils.Adapter {
       });
     for (const installation of this.installationArray) {
       const installationId = installation.id.toString();
+
+      let currentGatewayIndex = this.config.gatewayIndex;
       if (installation.gateways.length > 1) {
         this.log.info(
           'Found ' + installation.gateways.length + ' gateways for installation for installation ' + installation.id,
@@ -214,29 +217,30 @@ class Viessmannapi extends utils.Adapter {
         installation.gateways = installation.gateways.filter((gateway) => {
           return gateway.aggregatedStatus !== 'Offline';
         });
+        //check if gatewayIndex is valid
+        if (currentGatewayIndex > installation.gateways.length) {
+          this.log.warn(
+            'Gateway Index ' +
+              currentGatewayIndex +
+              ' is not valid. Please check the number of gateways for installation ' +
+              installation.id +
+              ' index is set to 1',
+          );
+          currentGatewayIndex = 1;
+        }
         this.log.warn(
           'Found ' +
             installation.gateways.length +
             ' online gateways select ' +
-            this.config.gatewayIndex +
+            currentGatewayIndex +
             ' gateway. for installation ' +
             installation.id,
         );
       }
-      //check if gatewayIndex is valid
-      if (this.config.gatewayIndex > installation.gateways.length) {
-        this.log.warn(
-          'Gateway Index ' +
-            this.config.gatewayIndex +
-            ' is not valid. Please check the number of gateways for installation ' +
-            installation.id +
-            ' index is set to 1',
-        );
-        this.config.gatewayIndex = 1;
-      }
-      const gateway = installation.gateways[this.config.gatewayIndex - 1];
+      this.gateWayIndexOject[installationId] = currentGatewayIndex;
+      const gateway = installation.gateways[currentGatewayIndex - 1];
       if (!gateway || gateway == null) {
-        this.log.warn('No gateway found for installation ' + installation.id + 'and index ' + this.config.gatewayIndex);
+        this.log.warn('No gateway found for installation ' + installation.id + 'and index ' + currentGatewayIndex);
         this.log.info(JSON.stringify(installation.gateways));
         return;
       }
@@ -278,12 +282,13 @@ class Viessmannapi extends utils.Adapter {
     };
 
     for (const installation of this.installationArray) {
-      if (!installation['gateways'][this.config.gatewayIndex - 1]) {
+      const currentGatewayIndex = this.gateWayIndexOject[installation.id.toString()];
+      if (!installation['gateways'][currentGatewayIndex - 1]) {
         this.log.warn('No gateway found for installation ' + installation.id);
         return;
       }
 
-      for (const device of installation['gateways'][this.config.gatewayIndex - 1]['devices']) {
+      for (const device of installation['gateways'][currentGatewayIndex - 1]['devices']) {
         if (this.config.devicelist) {
           const deviceArray = this.config.devicelist.replace(/\s/g, '').split(',');
           if (!deviceArray.includes(device.id.toString())) {
@@ -379,12 +384,12 @@ class Viessmannapi extends utils.Adapter {
     };
     for (const installation of this.installationArray) {
       const installationId = installation.id.toString();
-
-      if (!installation['gateways'][this.config.gatewayIndex - 1]) {
-        this.log.warn('No gateway found for installation ' + installation.id + 'and index ' + this.config.gatewayIndex);
+      const currentGatewayIndex = this.gateWayIndexOject[installationId];
+      if (!installation['gateways'][currentGatewayIndex - 1]) {
+        this.log.warn('No gateway found for installation ' + installation.id + 'and index ' + currentGatewayIndex);
         return;
       }
-      const gatewaySerial = installation['gateways'][this.config.gatewayIndex - 1].serial.toString();
+      const gatewaySerial = installation['gateways'][currentGatewayIndex - 1].serial.toString();
       await this.requestClient({
         method: 'get',
         url: 'https://api.viessmann.com/iot/v2/events-history/installations/' + installationId + '/events',
