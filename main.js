@@ -182,6 +182,7 @@ class Viessmannapi extends utils.Adapter {
           this.log.info(this.installationArray.length + ' installations found.');
           for (const installation of this.installationArray) {
             const installationId = installation.id.toString();
+            this.log.info('Installation ' + installation.description + ' created');
             await this.setObjectNotExistsAsync(installationId, {
               type: 'device',
               common: {
@@ -205,17 +206,36 @@ class Viessmannapi extends utils.Adapter {
     for (const installation of this.installationArray) {
       const installationId = installation.id.toString();
       if (installation.gateways.length > 1) {
-        this.log.info('Found ' + installation.gateways.length + ' gateways for installation ');
+        this.log.info(
+          'Found ' + installation.gateways.length + ' gateways for installation for installation ' + installation.id,
+        );
+        this.log.debug(JSON.stringify(installation.gateways));
         this.log.info('Filter out offline gateways.');
         installation.gateways = installation.gateways.filter((gateway) => {
           return gateway.aggregatedStatus !== 'Offline';
         });
         this.log.warn(
-          'Found ' + installation.gateways.length + ' online gateways select ' + this.config.gatewayIndex + ' gateway.',
+          'Found ' +
+            installation.gateways.length +
+            ' online gateways select ' +
+            this.config.gatewayIndex +
+            ' gateway. for installation ' +
+            installation.id,
         );
       }
+      //check if gatewayIndex is valid
+      if (this.config.gatewayIndex > installation.gateways.length) {
+        this.log.warn(
+          'Gateway Index ' +
+            this.config.gatewayIndex +
+            ' is not valid. Please check the number of gateways for installation ' +
+            installation.id +
+            ' index is set to 1',
+        );
+        this.config.gatewayIndex = 1;
+      }
       const gateway = installation.gateways[this.config.gatewayIndex - 1];
-      if (!gateway) {
+      if (!gateway || gateway == null) {
         this.log.warn('No gateway found for installation ' + installation.id + 'and index ' + this.config.gatewayIndex);
         this.log.info(JSON.stringify(installation.gateways));
         return;

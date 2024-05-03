@@ -16,18 +16,18 @@
         "url": "https://github.com/TA2k/ioBroker.viessmannapi"
     },
     "dependencies": {
-        "@iobroker/adapter-core": "^3.0.4",
+        "@iobroker/adapter-core": "^3.1.4",
         "axios": "^1.6.8",
         "json-bigint": "^1.0.0",
-        "qs": "^6.12.0",
+        "qs": "^6.12.1",
         "retry-axios": "^2.6.0"
     },
     "devDependencies": {
-        "@iobroker/testing": "^4.1.1",
-        "@types/node": "^20.11.28",
+        "@iobroker/testing": "^4.1.3",
+        "@types/node": "^20.12.8",
         "axios": "^1.6.8",
         "eslint": "^8.57.0",
-        "typescript": "^5.4.2"
+        "typescript": "^5.4.5"
     },
     "main": "main.js",
     "scripts": {
