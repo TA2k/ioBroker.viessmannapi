@@ -27,10 +27,13 @@
         "@alcalzone/release-script-plugin-iobroker": "^3.7.2",
         "@alcalzone/release-script-plugin-license": "^3.7.0",
         "@alcalzone/release-script-plugin-manual-review": "^3.7.0",
+        "@eslint/eslintrc": "^3.3.1",
+        "@eslint/js": "^9.23.0",
         "@iobroker/testing": "^5.0.4",
         "@types/node": "^22.13.14",
         "axios": "^1.8.4",
         "eslint": "^9.23.0",
+        "globals": "^16.0.0",
         "typescript": "^5.8.2"
     },
     "main": "main.js",

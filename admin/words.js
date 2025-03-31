@@ -1,6 +1,7 @@
-/*global systemDictionary:true */
-'use strict';
 
+// /*global systemDictionary:true */
+'use strict';
+//eslint-disable-next-line
 systemDictionary = {
   'viessmannapi adapter settings': {
     en: 'Adapter settings for viessmannapi',

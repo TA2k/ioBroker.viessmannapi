@@ -33,7 +33,7 @@ class Viessmannapi extends utils.Adapter {
       statusCodesToRetry: [[500, 599]],
       httpMethodsToRetry: ['POST'],
     };
-    const interceptorId = rax.attach(this.requestClient);
+    // const interceptorId = rax.attach(this.requestClient);
     this.updateInterval = null;
     this.eventInterval = null;
     this.reLoginTimeout = null;
@@ -392,7 +392,7 @@ class Viessmannapi extends utils.Adapter {
         return;
       }
       // Note: The events endpoint /iot/v2/events-history/... was already V2 in the original code. No change needed here.
-      const gatewaySerial = installation['gateways'][currentGatewayIndex - 1].serial.toString();
+      // const gatewaySerial = installation['gateways'][currentGatewayIndex - 1].serial.toString();
       await this.requestClient({
         method: 'get',
         url: 'https://api.viessmann.com/iot/v2/events-history/installations/' + installationId + '/events',
@@ -497,6 +497,7 @@ class Viessmannapi extends utils.Adapter {
       clearInterval(this.refreshTokenInterval);
       callback();
     } catch (e) {
+      this.log.error('Error: ' + e);
       callback();
     }
   }
@@ -513,7 +514,7 @@ class Viessmannapi extends utils.Adapter {
           this.log.info('please use setValue Object to set values');
           return;
         }
-        const deviceId = id.split('.')[2];
+        // const deviceId = id.split('.')[2];
         const parentPath = id.split('.').slice(1, -1).slice(1).join('.');
 
         const uriState = await this.getStateAsync(parentPath + '.uri');
