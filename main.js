@@ -269,6 +269,8 @@ class Viessmannapi extends utils.Adapter {
     const statusArray = [
       {
         path: 'features',
+        // *** MODIFIED LINE BELOW ***
+        // Changed from /iot/v1/equipment/installations/... to /iot/v2/features/installations/... as per Viessmann API update effective 2025-04-30
         url: 'https://api.viessmann.com/iot/v2/features/installations/$installation/gateways/$gatewaySerial/devices/$id/features',
         desc: 'Features and States of the device',
       },
@@ -389,6 +391,7 @@ class Viessmannapi extends utils.Adapter {
         this.log.warn('No gateway found for installation ' + installation.id + 'and index ' + currentGatewayIndex);
         return;
       }
+      // Note: The events endpoint /iot/v2/events-history/... was already V2 in the original code. No change needed here.
       const gatewaySerial = installation['gateways'][currentGatewayIndex - 1].serial.toString();
       await this.requestClient({
         method: 'get',
