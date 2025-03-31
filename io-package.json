@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "viessmannapi",
-    "version": "2.4.0",
+    "version": "2.4.1",
     "news": {
+      "2.4.1": {
+        "en": "Update to new viessmann api",
+        "de": "Update auf neue viessmann api",
+        "ru": "Обновление для Viessmann api",
+        "pt": "Atualização para novo viessmann api",
+        "nl": "Update naar nieuwe viessmann api",
+        "fr": "Mise à jour de la nouvelle viessmann api",
+        "it": "Aggiornamento alla nuova viessmann api",
+        "es": "Actualización a nuevo viessmann api",
+        "pl": "Aktualizacja do nowego Viessmann api",
+        "uk": "Update to new viessmann api",
+        "zh-cn": "更新到新 Viessmann api"
+      },
       "2.4.0": {
         "en": "Add allow list to prevent rate limit with ViCare Einzelraumsteuerung",
         "de": "Eine Allow-Liste hinzugefügt um das Ratelimit bei Aktivierung der ViCare Einzelraumsteuerung zu verhindern"
@@ -24,33 +37,6 @@
       },
       "2.0.8": {
         "en": "add error 500 description"
-      },
-      "2.0.7": {
-        "en": "Bugfixes"
-      },
-      "2.0.6": {
-        "en": "Save schedules values as json",
-        "de": "Schedule Werte werden direkt als JSON gespeichert"
-      },
-      "2.0.4": {
-        "en": "Fix virtual device detection",
-        "de": "Virtuelle Geräteerkennung für Rate Limit verbessert"
-      },
-      "2.0.2": {
-        "en": "Add retry on failed setValues",
-        "de": "Wiederholung eingebaut falls setValue fehlschlägt."
-      },
-      "2.0.1": {
-        "en": "initial release for new API. States are changed.",
-        "de": "Erstveröffentlichung neue API. Datenpunkte haben sich geändert.",
-        "ru": "Начальная версия",
-        "pt": "lançamento inicial",
-        "nl": "Eerste uitgave",
-        "fr": "Première version",
-        "it": "Versione iniziale",
-        "es": "Versión inicial",
-        "pl": "Pierwsze wydanie",
-        "zh-cn": "首次出版"
       }
     },
     "titleLang": {
@@ -77,8 +63,12 @@
       "pl": "Adapter do urządzeń Viessmannapi z Vitoconnect Box",
       "zh-cn": "带有 Vitoconnect 盒的 Viessmannapi 设备适配器"
     },
-    "authors": ["TA2k <tombox2020@gmail.com>"],
-    "keywords": ["Viessmannapi"],
+    "authors": [
+      "TA2k <tombox2020@gmail.com>"
+    ],
+    "keywords": [
+      "Viessmannapi"
+    ],
     "license": "MIT",
     "platform": "Javascript/Node.js",
     "main": "main.js",
@@ -109,8 +99,14 @@
       }
     ]
   },
-  "encryptedNative": ["client_id", "password"],
-  "protectedNative": ["client_id", "password"],
+  "encryptedNative": [
+    "client_id",
+    "password"
+  ],
+  "protectedNative": [
+    "client_id",
+    "password"
+  ],
   "native": {
     "username": "",
     "password": "",
