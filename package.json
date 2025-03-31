@@ -45,7 +45,7 @@
         "test": "npm run test:js && npm run test:package",
         "check": "tsc --noEmit -p tsconfig.check.json",
         "lint": "eslint",
-        "release": "release-script -all"
+        "release": "release-script"
     },
     "bugs": {
         "url": "https://github.com/TA2k/ioBroker.viessmannapi/issues"
