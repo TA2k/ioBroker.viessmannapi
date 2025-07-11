@@ -2,6 +2,10 @@
 
 /*
  * Created with @iobroker/create-adapter v1.34.1
+ *
+ * Domain Migration Update (July 2025):
+ * Updated all Viessmann API endpoints from viessmann.com to viessmann-climatesolutions.com
+ * as per official Viessmann notification for modernization of their services.
  */
 
 // The adapter-core module gives you access to the core ioBroker functions
@@ -99,7 +103,7 @@ class Viessmannapi extends utils.Adapter {
 
     const code = await this.requestClient({
       method: 'get',
-      url: 'https://iam.viessmann.com/idp/v3/authorize',
+      url: 'https://iam.viessmann-climatesolutions.com/idp/v3/authorize',
       headers: headers,
       params: data,
     })
@@ -142,7 +146,7 @@ class Viessmannapi extends utils.Adapter {
     delete headers.Authorization;
     await this.requestClient({
       method: 'post',
-      url: 'https://iam.viessmann.com/idp/v3/token',
+      url: 'https://iam.viessmann-climatesolutions.com/idp/v3/token',
       headers: headers,
       data: qs.stringify(data),
     })
@@ -173,7 +177,7 @@ class Viessmannapi extends utils.Adapter {
 
     await this.requestClient({
       method: 'get',
-      url: 'https://api.viessmann.com/iot/v1/equipment/installations?includeGateways=true',
+      url: 'https://api.viessmann-climatesolutions.com/iot/v1/equipment/installations?includeGateways=true',
       headers: headers,
     })
       .then(async (res) => {
@@ -271,7 +275,7 @@ class Viessmannapi extends utils.Adapter {
         path: 'features',
         // *** MODIFIED LINE BELOW ***
         // Changed from /iot/v1/equipment/installations/... to /iot/v2/features/installations/... as per Viessmann API update effective 2025-04-30
-        url: 'https://api.viessmann.com/iot/v2/features/installations/$installation/gateways/$gatewaySerial/devices/$id/features',
+        url: 'https://api.viessmann-climatesolutions.com/iot/v2/features/installations/$installation/gateways/$gatewaySerial/devices/$id/features',
         desc: 'Features and States of the device',
       },
     ];
@@ -395,7 +399,10 @@ class Viessmannapi extends utils.Adapter {
       // const gatewaySerial = installation['gateways'][currentGatewayIndex - 1].serial.toString();
       await this.requestClient({
         method: 'get',
-        url: 'https://api.viessmann.com/iot/v2/events-history/installations/' + installationId + '/events',
+        url:
+          'https://api.viessmann-climatesolutions.com/iot/v2/events-history/installations/' +
+          installationId +
+          '/events',
         headers: headers,
       })
         .then((res) => {
@@ -446,7 +453,7 @@ class Viessmannapi extends utils.Adapter {
   async refreshToken() {
     await this.requestClient({
       method: 'post',
-      url: 'https://iam.viessmann.com/idp/v3/token',
+      url: 'https://iam.viessmann-climatesolutions.com/idp/v3/token',
       headers: {
         'User-Agent': this.userAgent,
         'Content-Type': 'application/x-www-form-urlencoded',

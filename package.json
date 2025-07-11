@@ -1,6 +1,6 @@
 {
   "name": "iobroker.viessmannapi",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "Adapter for Viessmannapi",
   "author": {
     "name": "TA2k",
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.2.3",
-    "axios": "^1.8.4",
+    "axios": "^1.10.0",
     "json-bigint": "^1.0.0",
     "qs": "^6.14.0",
     "retry-axios": "^2.6.0"
@@ -28,13 +28,13 @@
     "@alcalzone/release-script-plugin-license": "^3.7.0",
     "@alcalzone/release-script-plugin-manual-review": "^3.7.0",
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.23.0",
+    "@eslint/js": "^9.31.0",
     "@iobroker/testing": "^5.0.4",
-    "@types/node": "^22.13.14",
-    "axios": "^1.8.4",
-    "eslint": "^9.23.0",
-    "globals": "^16.0.0",
-    "typescript": "^5.8.2"
+    "@types/node": "^22.16.3",
+    "axios": "^1.10.0",
+    "eslint": "^9.31.0",
+    "globals": "^16.3.0",
+    "typescript": "^5.8.3"
   },
   "main": "main.js",
   "scripts": {

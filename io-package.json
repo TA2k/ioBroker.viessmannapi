@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "viessmannapi",
-    "version": "2.4.1",
+    "version": "2.4.2",
     "news": {
+      "2.4.2": {
+        "en": "change api host name",
+        "de": "api host name",
+        "ru": "изменить имя хоста api",
+        "pt": "alterar o nome da máquina api",
+        "nl": "api-hostnaam wijzigen",
+        "fr": "changer le nom de l'hôte api",
+        "it": "cambia nome host api",
+        "es": "cambio api nombre de host",
+        "pl": "zmienić nazwę serwera api",
+        "uk": "змінити ім'я апі",
+        "zh-cn": "更改 api 主机名称"
+      },
       "2.4.1": {
         "en": "Update to new viessmann api",
         "de": "Update auf neue viessmann api",
@@ -34,9 +47,6 @@
       },
       "2.0.9": {
         "en": "add setValue for curve values"
-      },
-      "2.0.8": {
-        "en": "add error 500 description"
       }
     },
     "titleLang": {
