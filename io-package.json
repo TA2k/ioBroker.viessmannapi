@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "viessmannapi",
-    "version": "2.4.2",
+    "version": "2.4.3",
     "news": {
+      "2.4.3": {
+        "en": "fix for new role preventing data update",
+        "de": "fix für neue rolle zur verhinderung von datenaktualisierung",
+        "ru": "исправление новой роли, предотвращающее обновление данных",
+        "pt": "corrigir para nova função que impede a atualização de dados",
+        "nl": "fix voor nieuwe rol voorkomen dat gegevens update",
+        "fr": "fixer un nouveau rôle empêchant la mise à jour des données",
+        "it": "correzione di nuovo ruolo che impedisce l'aggiornamento dei dati",
+        "es": "fijación de la nueva función de prevención de la actualización de datos",
+        "pl": "fix for new role preventing data update",
+        "uk": "виправити для оновлення нових функцій",
+        "zh-cn": "修正防止数据更新的新角色"
+      },
       "2.4.2": {
         "en": "change api host name",
         "de": "api host name",
@@ -44,9 +57,6 @@
       "2.1.1": {
         "en": "update to new api endpoint",
         "de": "Update auf neue API Endpunkte"
-      },
-      "2.0.9": {
-        "en": "add setValue for curve values"
       }
     },
     "titleLang": {
