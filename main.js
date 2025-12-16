@@ -6,6 +6,16 @@
  * Domain Migration Update (July 2025):
  * Updated all Viessmann API endpoints from viessmann.com to viessmann-climatesolutions.com
  * as per official Viessmann notification for modernization of their services.
+ *
+ * API v2 Migration Update (December 2025):
+ * Updated /iot/v1/equipment/installations endpoint to /iot/v2/equipment/installations
+ * The v1 endpoint was deprecated and removed on 2025-12-15 (HTTP 410 Gone)
+ *
+ * Feature Name Changes (April 2025):
+ * The adapter dynamically processes all features from the API without hardcoded feature names.
+ * Therefore, all feature naming changes (e.g., hotWaterStorage -> dhwCylinder, heating.buffer -> heating.bufferCylinder,
+ * heating.fuelcell -> fuelCell, heating.scop -> heating.spf, ventilation.operating.programs -> ventilation.quickmodes/levels)
+ * are automatically reflected as the API returns the updated feature names.
  */
 
 // The adapter-core module gives you access to the core ioBroker functions
@@ -177,7 +187,7 @@ class Viessmannapi extends utils.Adapter {
 
     await this.requestClient({
       method: 'get',
-      url: 'https://api.viessmann-climatesolutions.com/iot/v1/equipment/installations?includeGateways=true',
+      url: 'https://api.viessmann-climatesolutions.com/iot/v2/equipment/installations?includeGateways=true',
       headers: headers,
     })
       .then(async (res) => {

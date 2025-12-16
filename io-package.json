@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "viessmannapi",
-    "version": "2.4.3",
+    "version": "2.4.4",
     "news": {
+      "2.4.4": {
+        "en": "fix for depreacted endpoint",
+        "de": "fix für depreacted endpoint",
+        "ru": "обсуждение depreacted endpoint",
+        "pt": "fixar para o ponto final desactualizado",
+        "nl": "fix voor depreacted eindpunt",
+        "fr": "correction du paramètre déprécié",
+        "it": "correzione per punto finale deprecato",
+        "es": "fijado para el punto final depreactado",
+        "pl": "fix for depreacted punkt końcowy",
+        "uk": "фіксація для депресованої кінцевої точки",
+        "zh-cn": "解密终点的修补"
+      },
       "2.4.3": {
         "en": "fix for new role preventing data update",
         "de": "fix für neue rolle zur verhinderung von datenaktualisierung",
@@ -53,10 +66,6 @@
       "2.2.1": {
         "en": "fix device role detection and id parsing",
         "de": "Rolen Erkennung und ID Parsing verbessert"
-      },
-      "2.1.1": {
-        "en": "update to new api endpoint",
-        "de": "Update auf neue API Endpunkte"
       }
     },
     "titleLang": {
