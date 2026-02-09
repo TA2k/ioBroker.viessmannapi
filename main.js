@@ -349,6 +349,26 @@ class Viessmannapi extends utils.Adapter {
               if (data.length === 1) {
                 data = data[0];
               }
+              // Filter features by path pattern if featureFilter is configured
+              if (this.config.featureFilter && Array.isArray(data)) {
+                const patterns = this.config.featureFilter.replace(/\s/g, '').split(',').filter(p => p);
+                if (patterns.length > 0) {
+                  const originalCount = data.length;
+                  data = data.filter(item => {
+                    const featurePath = item.feature || '';
+                    return patterns.some(pattern => {
+                      if (pattern.endsWith('*')) {
+                        // Wildcard: heating.* matches heating.boiler, heating.burner, etc.
+                        const prefix = pattern.slice(0, -1);
+                        return featurePath.startsWith(prefix);
+                      }
+                      // Exact match
+                      return featurePath === pattern;
+                    });
+                  });
+                  this.log.debug(`Feature filter: ${originalCount} -> ${data.length} features`);
+                }
+              }
               const extractPath = installation.id + '.' + device.id + '.' + element.path;
               const forceIndex = null;
 

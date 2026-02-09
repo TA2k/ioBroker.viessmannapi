@@ -144,6 +144,7 @@
     "eventInterval": 300,
     "gatewayIndex": 1,
     "devicelist": "",
+    "featureFilter": "",
     "allowVirtual": false
   },
   "objects": [],
