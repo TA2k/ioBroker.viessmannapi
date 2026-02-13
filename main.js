@@ -358,9 +358,14 @@ class Viessmannapi extends utils.Adapter {
                     const featurePath = item.feature || '';
                     return patterns.some(pattern => {
                       if (pattern.endsWith('*')) {
-                        // Wildcard: heating.* matches heating.boiler, heating.burner, etc.
-                        const prefix = pattern.slice(0, -1);
-                        return featurePath.startsWith(prefix);
+                        // Wildcard: heating.* matches heating, heating.boiler, heating.burner, etc.
+                        let prefix = pattern.slice(0, -1);
+                        // Remove trailing dot to get base path
+                        if (prefix.endsWith('.')) {
+                          prefix = prefix.slice(0, -1);
+                        }
+                        // Match base path exactly OR as prefix with dot separator
+                        return featurePath === prefix || featurePath.startsWith(prefix + '.');
                       }
                       // Exact match
                       return featurePath === pattern;
