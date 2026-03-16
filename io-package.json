@@ -106,6 +106,7 @@
     "extIcon": "https://raw.githubusercontent.com/TA2k/ioBroker.viessmannapi/master/admin/viessmannapi.png",
     "readme": "https://github.com/TA2k/ioBroker.viessmannapi/blob/master/README.md",
     "loglevel": "info",
+    "tier": 2,
     "mode": "daemon",
     "type": "climate-control",
     "compact": true,
