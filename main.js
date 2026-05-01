@@ -530,12 +530,10 @@ class Viessmannapi extends utils.Adapter {
       });
   }
   getCodeChallenge() {
-    let hash = '';
-    let result = '';
     const chars = '0123456789abcdef';
-    result = '';
+    let result = '';
     for (let i = 64; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-    hash = crypto.createHash('sha256').update(result).digest('base64');
+    let hash = crypto.createHash('sha256').update(result).digest('base64');
     hash = hash.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
     return [result, hash];
