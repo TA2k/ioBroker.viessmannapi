@@ -374,6 +374,9 @@ class Viessmannapi extends utils.Adapter {
                   this.log.debug(`Feature filter: ${originalCount} -> ${data.length} features`);
                 }
               }
+              if (Array.isArray(data)) {
+                data = data.filter(item => !item.feature || !item.feature.startsWith('device.messages.logbook'));
+              }
               const extractPath = installation.id + '.' + device.id + '.' + element.path;
               const forceIndex = null;
 
