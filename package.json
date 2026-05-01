@@ -33,7 +33,7 @@
     "@types/node": "^25.6.0",
     "axios": "^1.15.2",
     "eslint": "^10.3.0",
-    "globals": "^17.5.0",
+    "globals": "^17.6.0",
     "typescript": "^6.0.3"
   },
   "main": "main.js",
