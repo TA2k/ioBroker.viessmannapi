@@ -76,6 +76,19 @@ class Viessmannapi extends utils.Adapter {
 
     this.subscribeStates('*');
 
+    const adapterObjects = await this.getAdapterObjectsAsync();
+    const deleted = {};
+    for (const id of Object.keys(adapterObjects)) {
+      if (id.includes('.device.messages.logbook')) {
+        const basePath = id.split('.device.messages.logbook')[0] + '.device.messages.logbook';
+        if (!deleted[basePath]) {
+          this.log.info('Deleting logbook objects: ' + basePath);
+          await this.delObjectAsync(basePath, { recursive: true });
+          deleted[basePath] = true;
+        }
+      }
+    }
+
     await this.login();
     if (this.session.access_token) {
       await this.getDeviceIds();
