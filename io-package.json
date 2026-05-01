@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "viessmannapi",
-    "version": "2.4.4",
+    "version": "2.4.5",
     "news": {
+      "2.4.5": {
+        "en": "remove logbook from objects",
+        "de": "logbook aus Objekten entfernt",
+        "ru": "удалить журнал из объектов",
+        "pt": "remover diário de bordo dos objectos",
+        "nl": "logboek van objecten verwijderen",
+        "fr": "supprimer le journal de bord des objets",
+        "it": "rimuovere logbook da oggetti",
+        "es": "eliminar el registro de objetos",
+        "pl": "usunąć dziennik z obiektów",
+        "uk": "видалити книгу з об'єктів",
+        "zh-cn": "从对象中删除日志"
+      },
       "2.4.4": {
         "en": "fix for depreacted endpoint",
         "de": "fix für depreacted endpoint",
@@ -62,10 +75,6 @@
       "2.3.2": {
         "en": "Fix Login flow",
         "de": "Login Flow gefixt"
-      },
-      "2.2.1": {
-        "en": "fix device role detection and id parsing",
-        "de": "Rolen Erkennung und ID Parsing verbessert"
       }
     },
     "titleLang": {
@@ -92,12 +101,8 @@
       "pl": "Adapter do urządzeń Viessmannapi z Vitoconnect Box",
       "zh-cn": "带有 Vitoconnect 盒的 Viessmannapi 设备适配器"
     },
-    "authors": [
-      "TA2k <tombox2020@gmail.com>"
-    ],
-    "keywords": [
-      "Viessmannapi"
-    ],
+    "authors": ["TA2k <tombox2020@gmail.com>"],
+    "keywords": ["Viessmannapi"],
     "license": "MIT",
     "platform": "Javascript/Node.js",
     "main": "main.js",
@@ -128,14 +133,8 @@
       }
     ]
   },
-  "encryptedNative": [
-    "client_id",
-    "password"
-  ],
-  "protectedNative": [
-    "client_id",
-    "password"
-  ],
+  "encryptedNative": ["client_id", "password"],
+  "protectedNative": ["client_id", "password"],
   "native": {
     "username": "",
     "password": "",
