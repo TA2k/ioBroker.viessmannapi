@@ -136,6 +136,8 @@ setState("viessmannapi.0.xxxxxxx.0.features.ventilation.schedule.commands.setSch
 
 - (TA2k) Fix Login flow
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 
 MIT License
