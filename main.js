@@ -23,7 +23,7 @@
 const utils = require('@iobroker/adapter-core');
 const rax = require('retry-axios');
 const axios = require('axios').default;
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 const qs = require('qs');
 const { extractKeys } = require('./lib/extractKeys');
 
