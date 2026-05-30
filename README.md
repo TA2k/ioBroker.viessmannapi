@@ -112,6 +112,10 @@ setState("viessmannapi.0.xxxxxxx.0.features.ventilation.schedule.commands.setSch
 ```
 
 ## Changelog
+
+### **WORK IN PROGRESS**
+- (ioBroker-Bot) Adapter requires js-controller >= 6.0.11 now.
+
 ### 2.4.5 (2026-05-01)
 
 - remove logbook from objects
