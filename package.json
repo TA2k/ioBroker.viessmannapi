@@ -1,6 +1,6 @@
 {
   "name": "iobroker.viessmannapi",
-  "version": "2.4.5",
+  "version": "2.5.0",
   "description": "Adapter for Viessmannapi",
   "author": {
     "name": "TA2k",
@@ -16,25 +16,25 @@
     "url": "https://github.com/TA2k/ioBroker.viessmannapi"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.3.2",
-    "axios": "^1.15.2",
+    "@iobroker/adapter-core": "^3.4.3",
+    "axios": "^1.18.1",
     "json-bigint": "^1.0.0",
-    "qs": "^6.15.1",
+    "qs": "^6.15.3",
     "retry-axios": "^4.0.3"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^5.1.1",
-    "@alcalzone/release-script-plugin-iobroker": "^5.1.2",
-    "@alcalzone/release-script-plugin-license": "^5.1.1",
-    "@alcalzone/release-script-plugin-manual-review": "^5.1.1",
-    "@eslint/eslintrc": "^3.3.5",
+    "@alcalzone/release-script": "^5.2.1",
+    "@alcalzone/release-script-plugin-iobroker": "^5.2.0",
+    "@alcalzone/release-script-plugin-license": "^5.2.0",
+    "@alcalzone/release-script-plugin-manual-review": "^5.2.0",
+    "@eslint/eslintrc": "^3.3.6",
     "@eslint/js": "^10.0.1",
-    "@iobroker/testing": "^5.2.2",
-    "@types/node": "^25.6.0",
-    "axios": "^1.15.2",
-    "eslint": "^10.3.0",
-    "globals": "^17.6.0",
-    "typescript": "^6.0.3"
+    "@iobroker/testing": "^5.3.0",
+    "@types/node": "^26.1.1",
+    "axios": "^1.18.1",
+    "eslint": "^10.7.0",
+    "globals": "^17.7.0",
+    "typescript": "^7.0.2"
   },
   "main": "main.js",
   "scripts": {

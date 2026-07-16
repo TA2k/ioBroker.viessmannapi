@@ -9,9 +9,11 @@
         "allowJs": true,
         "checkJs": true,
 
-        "module": "commonjs",
-        "moduleResolution": "node",
+        "module": "node16",
+        "moduleResolution": "node16",
         "esModuleInterop": true,
+        // skip type checking of declaration files in dependencies
+        "skipLibCheck": true,
         // this is necessary for the automatic typing of the adapter config
         "resolveJsonModule": true,
 

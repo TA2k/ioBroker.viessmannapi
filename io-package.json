@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "viessmannapi",
-    "version": "2.4.5",
+    "version": "2.5.0",
     "news": {
+      "2.5.0": {
+        "en": "cleanup disabled features (e.g. unused RoomControl rooms) and skip them server-side",
+        "de": "deaktivierte Features (z.B. ungenutzte RoomControl-Räume) entfernen und serverseitig überspringen",
+        "ru": "очистка отключенных функций (например, неиспользуемых комнат RoomControl) и их пропуск на стороне сервера",
+        "pt": "limpar funcionalidades desativadas (por exemplo, salas RoomControl não utilizadas) e ignorá-las no servidor",
+        "nl": "uitgeschakelde functies opschonen (bijv. ongebruikte RoomControl-kamers) en ze server-side overslaan",
+        "fr": "nettoyer les fonctionnalités désactivées (par ex. les pièces RoomControl inutilisées) et les ignorer côté serveur",
+        "it": "pulire le funzionalità disabilitate (es. stanze RoomControl inutilizzate) e saltarle lato server",
+        "es": "limpiar funciones deshabilitadas (por ejemplo, habitaciones RoomControl no utilizadas) y omitirlas en el servidor",
+        "pl": "usuwanie wyłączonych funkcji (np. nieużywanych pokoi RoomControl) i pomijanie ich po stronie serwera",
+        "uk": "очищення вимкнених функцій (наприклад, невикористовуваних кімнат RoomControl) та їх пропуск на стороні сервера",
+        "zh-cn": "清理已禁用的功能（例如未使用的 RoomControl 房间）并在服务器端跳过它们"
+      },
       "2.4.5": {
         "en": "remove logbook from objects",
         "de": "logbook aus Objekten entfernt",

@@ -22,7 +22,7 @@
 // you need to create an adapter
 const utils = require('@iobroker/adapter-core');
 const rax = require('retry-axios');
-const axios = require('axios').default;
+const axios = require('axios');
 const crypto = require('crypto');
 const qs = require('qs');
 const { extractKeys } = require('./lib/extractKeys');
@@ -43,6 +43,7 @@ class Viessmannapi extends utils.Adapter {
     this.userAgent = 'ioBroker 2.0.4';
     this.requestClient = axios.create();
     this.requestClient.defaults.raxConfig = {
+      // @ts-expect-error retry-axios expects the axios instance here
       instance: this.requestClient,
       statusCodesToRetry: [[500, 599]],
       httpMethodsToRetry: ['POST'],
@@ -89,6 +90,42 @@ class Viessmannapi extends utils.Adapter {
       }
     }
 
+    // One-time cleanup of all disabled features (isEnabled === false), e.g. unused RoomControl rooms.
+    // Read-only marker: unset/false => run once, then set true. true => skip.
+    await this.setObjectNotExistsAsync('info.disabledCleanupDone', {
+      type: 'state',
+      common: {
+        name: 'Disabled features (isEnabled=false) cleaned up once',
+        role: 'indicator',
+        type: 'boolean',
+        write: false,
+        read: true,
+        def: false,
+      },
+      native: {},
+    });
+    const disabledCleanupState = await this.getStateAsync('info.disabledCleanupDone');
+    if (!disabledCleanupState || !disabledCleanupState.val) {
+      const enabledStates = await this.getStatesAsync('*.features.*.isEnabled');
+      let removed = 0;
+      for (const id of Object.keys(enabledStates)) {
+        if (enabledStates[id] && enabledStates[id].val === false && id.includes('.features.')) {
+          // id looks like <namespace>.<inst>.<device>.features.<feature>.isEnabled
+          // delete the feature channel (parent of the isEnabled state)
+          const featurePath = id.substring(0, id.lastIndexOf('.isEnabled'));
+          try {
+            this.log.debug('Deleting disabled feature: ' + featurePath);
+            await this.delObjectAsync(featurePath, { recursive: true });
+            removed++;
+          } catch (error) {
+            this.log.warn('Could not delete disabled feature ' + featurePath + ': ' + error);
+          }
+        }
+      }
+      this.log.info(`Disabled feature cleanup removed ${removed} features`);
+      await this.setStateAsync('info.disabledCleanupDone', true, true);
+    }
+
     await this.login();
     if (this.session.access_token) {
       await this.getDeviceIds();
@@ -110,11 +147,13 @@ class Viessmannapi extends utils.Adapter {
   async login() {
     const [code_verifier, codeChallenge] = this.getCodeChallenge();
 
+    /** @type {Record<string, any>} */
     const headers = {
       Accept: '*/*',
       'User-Agent': this.userAgent,
       Authorization: 'Basic ' + Buffer.from(this.config.username + ':' + this.config.password).toString('base64'),
     };
+    /** @type {Record<string, any>} */
     let data = {
       client_id: this.config.client_id,
       response_type: 'code',
@@ -329,6 +368,8 @@ class Viessmannapi extends utils.Adapter {
           let url = element.url.replace('$id', device.id);
           url = url.replace('$installation', installation.id);
           url = url.replace('$gatewaySerial', device.gatewaySerial);
+          // Skip disabled features server-side (e.g. unused RoomControl rooms) so they never reach the client
+          url += (url.includes('?') ? '&' : '?') + 'skipDisabled=true';
           if (
             !ignoreFilter &&
             device.roles.some((role) => {
@@ -576,18 +617,24 @@ class Viessmannapi extends utils.Adapter {
         const uriState = await this.getStateAsync(parentPath + '.uri');
         const idState = await this.getObjectAsync(parentPath + '.setValue');
 
+        if (!idState) {
+          this.log.info('No setValue object found for ' + parentPath);
+          return;
+        }
+
+        /** @type {Record<string, any>} */
         const data = {};
 
         const param = idState.common.param;
         if (param) {
           if (typeof param !== 'object' || !Array.isArray(param)) {
             data[param] = state.val;
-            if (!isNaN(state.val)) {
+            if (!isNaN(Number(state.val))) {
               data[param] = Number(state.val);
             }
           } else {
             try {
-              const stateval = JSON.parse(state.val);
+              const stateval = JSON.parse(String(state.val));
               for (const entry of param) {
                 if (typeof stateval[entry.param] !== 'undefined') {
                   data[entry.param] = stateval[entry.param];
@@ -597,7 +644,7 @@ class Viessmannapi extends utils.Adapter {
                 }
               }
             } catch (error) {
-              this.log.error(error);
+              this.log.error(String(error));
               this.log.info(`Please use a valid JSON: {"slope": x, "shift": y}`);
             }
           }
@@ -616,9 +663,10 @@ class Viessmannapi extends utils.Adapter {
           'User-Agent': this.userAgent,
           Authorization: 'Bearer ' + this.session.access_token,
         };
+        // @ts-expect-error raxConfig is added by retry-axios, not part of the axios config type
         await this.requestClient({
           method: 'post',
-          url: uriState.val,
+          url: String(uriState.val),
           headers: headers,
           data: data,
           raxConfig: {
