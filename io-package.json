@@ -4,8 +4,8 @@
     "version": "2.5.0",
     "news": {
       "2.5.0": {
-        "en": "cleanup disabled features (e.g. unused RoomControl rooms) and skip them server-side",
-        "de": "deaktivierte Features (z.B. ungenutzte RoomControl-Räume) entfernen und serverseitig überspringen",
+        "en": "reduce unused states",
+        "de": "Ungenutzte Object State entfernt",
         "ru": "очистка отключенных функций (например, неиспользуемых комнат RoomControl) и их пропуск на стороне сервера",
         "pt": "limpar funcionalidades desativadas (por exemplo, salas RoomControl não utilizadas) e ignorá-las no servidor",
         "nl": "uitgeschakelde functies opschonen (bijv. ongebruikte RoomControl-kamers) en ze server-side overslaan",
