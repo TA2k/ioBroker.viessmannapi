@@ -1,22 +1,11 @@
 {
     "i18n": true,
-    "type": "tabs",
+    "type": "panel",
     "items": {
-        "tabAccess": {
+        "sectionAccess": {
             "type": "panel",
             "label": "Access",
             "items": {
-                "_headerAccount": {
-                    "type": "header",
-                    "newLine": true,
-                    "size": 2,
-                    "text": "Viessmann account",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 12,
-                    "lg": 12,
-                    "xl": 12
-                },
                 "_accountInfo": {
                     "type": "staticText",
                     "newLine": true,
@@ -74,23 +63,19 @@
                     "lg": 8,
                     "xl": 6
                 }
-            }
+            },
+            "collapsable": true,
+            "newLine": true,
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
         },
-        "tabPolling": {
+        "sectionPolling": {
             "type": "panel",
             "label": "Polling",
             "items": {
-                "_headerPolling": {
-                    "type": "header",
-                    "newLine": true,
-                    "size": 2,
-                    "text": "Which devices are polled and how often",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 12,
-                    "lg": 12,
-                    "xl": 12
-                },
                 "interval": {
                     "type": "number",
                     "newLine": true,
@@ -141,9 +126,16 @@
                     "lg": 4,
                     "xl": 3
                 }
-            }
+            },
+            "collapsable": true,
+            "newLine": true,
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
         },
-        "tabDataPoints": {
+        "sectionDataPoints": {
             "type": "panel",
             "label": "Data points",
             "items": {
@@ -281,7 +273,14 @@
                         "type": "warning"
                     }
                 }
-            }
+            },
+            "collapsable": true,
+            "newLine": true,
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
         }
     }
 }

@@ -42,7 +42,5 @@
     "Update interval in minutes": "更新间隔（分钟）",
     "User name (e-mail address)": "用户名（电子邮件地址）",
     "Values (properties), timestamp and commands (uri, isExecutable, setValue) stay. For a heat pump this removes about half of all data points.": "值（properties）、timestamp 和命令（uri、isExecutable、setValue）会保留。对于热泵，这会减少约一半的数据点。",
-    "Viessmann account": "Viessmann 账户",
-    "Which devices are polled and how often": "轮询哪些设备以及轮询频率",
     "Without this option filtered data points stay with their last value and are not updated any more. If a filter is switched off again, the adapter creates the data points again at its next start.": "不启用此选项时，被过滤的数据点会保留最后的值且不再更新。如果再次关闭某个过滤器，适配器会在下次启动时重新创建这些数据点。"
 }

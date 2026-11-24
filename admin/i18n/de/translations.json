@@ -42,7 +42,5 @@
     "Update interval in minutes": "Aktualisierungsintervall in Minuten",
     "User name (e-mail address)": "Benutzername (E-Mail-Adresse)",
     "Values (properties), timestamp and commands (uri, isExecutable, setValue) stay. For a heat pump this removes about half of all data points.": "Werte (properties), timestamp und Befehle (uri, isExecutable, setValue) bleiben. Bei einer Wärmepumpe entfällt damit etwa die Hälfte aller Datenpunkte.",
-    "Viessmann account": "Viessmann-Konto",
-    "Which devices are polled and how often": "Welche Geräte wie oft abgefragt werden",
     "Without this option filtered data points stay with their last value and are not updated any more. If a filter is switched off again, the adapter creates the data points again at its next start.": "Ohne diese Option bleiben ausgefilterte Datenpunkte mit ihrem letzten Wert stehen und werden nicht mehr aktualisiert. Wird ein Filter wieder abgeschaltet, legt der Adapter die Datenpunkte beim nächsten Start neu an."
 }

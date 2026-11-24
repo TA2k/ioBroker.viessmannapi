@@ -42,7 +42,5 @@
     "Update interval in minutes": "Update-interval in minuten",
     "User name (e-mail address)": "Gebruikersnaam (e-mailadres)",
     "Values (properties), timestamp and commands (uri, isExecutable, setValue) stay. For a heat pump this removes about half of all data points.": "Waarden (properties), timestamp en commando's (uri, isExecutable, setValue) blijven. Bij een warmtepomp vervalt hiermee ongeveer de helft van alle datapunten.",
-    "Viessmann account": "Viessmann-account",
-    "Which devices are polled and how often": "Welke apparaten hoe vaak worden opgevraagd",
     "Without this option filtered data points stay with their last value and are not updated any more. If a filter is switched off again, the adapter creates the data points again at its next start.": "Zonder deze optie blijven uitgefilterde datapunten met hun laatste waarde staan en worden ze niet meer bijgewerkt. Wordt een filter weer uitgeschakeld, dan maakt de adapter de datapunten bij de volgende start opnieuw aan."
 }

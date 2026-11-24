@@ -42,7 +42,5 @@
     "Update interval in minutes": "Интервал обновления в минутах",
     "User name (e-mail address)": "Имя пользователя (адрес эл. почты)",
     "Values (properties), timestamp and commands (uri, isExecutable, setValue) stay. For a heat pump this removes about half of all data points.": "Значения (properties), timestamp и команды (uri, isExecutable, setValue) остаются. Для теплового насоса это убирает примерно половину всех точек данных.",
-    "Viessmann account": "Учётная запись Viessmann",
-    "Which devices are polled and how often": "Какие устройства и как часто опрашиваются",
     "Without this option filtered data points stay with their last value and are not updated any more. If a filter is switched off again, the adapter creates the data points again at its next start.": "Без этой опции отфильтрованные точки данных остаются с последним значением и больше не обновляются. Если фильтр снова отключить, адаптер заново создаст точки данных при следующем запуске."
 }
