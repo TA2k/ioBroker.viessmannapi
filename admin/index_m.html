@@ -127,6 +127,38 @@
       </div>
       <div class="row">
         <div class="col s6 input-field">
+          <input type="text" class="value" id="featureBlocklist" />
+          <label for="featureBlocklist" class="translate"
+            >Feature blocklist (comma-separated). Use * as wildcard. Example: device.messages.*
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s6 input-field">
+          <input type="checkbox" class="value" id="skipMetadata" />
+          <label for="skipMetadata" class="translate"
+            >Only values and commands: create no states for feature metadata (feature, gatewayId, deviceId, apiVersion,
+            isEnabled, isReady, uri, type of a property, name and params of a command).
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s6 input-field">
+          <input type="checkbox" class="value" id="disableEvents" />
+          <label for="disableEvents" class="translate">Do not fetch gateway events.</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s6 input-field">
+          <input type="checkbox" class="value" id="deleteFiltered" />
+          <label for="deleteFiltered" class="translate"
+            >Delete existing objects at adapter start which are excluded by the settings above. Objects with custom
+            settings (e.g. history) are kept.
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s6 input-field">
           <input type="checkbox" class="value" id="allowVirtual" />
           <label for="allowVirtual" class="translate"
             >Allow update of virtual devices like Room Controls Devices.

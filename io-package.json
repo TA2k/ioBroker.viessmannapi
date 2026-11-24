@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "viessmannapi",
-    "version": "2.5.0",
+    "version": "2.6.0",
     "news": {
+      "2.6.0": {
+        "en": "optional filters to reduce the number of objects: feature blocklist, skip metadata states, disable events, delete filtered objects",
+        "de": "Optionale Filter zur Reduzierung der Objekte: Feature-Ausschlussliste, Metadaten-Datenpunkte weglassen, Events abschalten, gefilterte Objekte löschen"
+      },
       "2.5.0": {
         "en": "reduce unused states",
         "de": "Ungenutzte Object State entfernt",
@@ -157,6 +161,10 @@
     "gatewayIndex": 1,
     "devicelist": "",
     "featureFilter": "",
+    "featureBlocklist": "",
+    "skipMetadata": false,
+    "disableEvents": false,
+    "deleteFiltered": false,
     "allowVirtual": false
   },
   "objects": [],

@@ -27,6 +27,11 @@ const crypto = require('crypto');
 const qs = require('qs');
 const { extractKeys } = require('./lib/extractKeys');
 
+// Keys of a feature that only describe it and never carry a value (see option "skipMetadata")
+const FEATURE_META_KEYS = ['feature', 'gatewayId', 'deviceId', 'apiVersion', 'isEnabled', 'isReady', 'uri'];
+// Keys a feature object uses for its own data. Anything else below a feature channel belongs to a nested feature.
+const FEATURE_OWN_KEYS = [...FEATURE_META_KEYS, 'timestamp', 'properties', 'commands', 'deprecated', 'components'];
+
 class Viessmannapi extends utils.Adapter {
   /**
    * @param {Partial<utils.AdapterOptions>} [options={}]
@@ -130,14 +135,24 @@ class Viessmannapi extends utils.Adapter {
     if (this.session.access_token) {
       await this.getDeviceIds();
       await this.updateDevices(true);
-      await this.getEvents();
+      if (this.config.disableEvents) {
+        if (this.config.deleteFiltered) {
+          for (const installation of this.installationArray) {
+            await this.deleteObjects(installation.id + '.events');
+          }
+        }
+      } else {
+        await this.getEvents();
+      }
       this.updateInterval = setInterval(async () => {
         await this.updateDevices();
       }, this.config.interval * 60 * 1000);
 
-      this.eventInterval = setInterval(async () => {
-        await this.getEvents();
-      }, this.config.eventInterval * 60 * 1000);
+      if (!this.config.disableEvents) {
+        this.eventInterval = setInterval(async () => {
+          await this.getEvents();
+        }, this.config.eventInterval * 60 * 1000);
+      }
 
       this.refreshTokenInterval = setInterval(() => {
         this.refreshToken();
@@ -361,6 +376,9 @@ class Viessmannapi extends utils.Adapter {
           const deviceArray = this.config.devicelist.replace(/\s/g, '').split(',');
           if (!deviceArray.includes(device.id.toString())) {
             this.log.debug('ignore for update: ' + device.id);
+            if (ignoreFilter && this.config.deleteFiltered) {
+              await this.deleteObjects(installation.id + '.' + device.id + '.features');
+            }
             continue;
           }
         }
@@ -403,28 +421,14 @@ class Viessmannapi extends utils.Adapter {
               if (data.length === 1) {
                 data = data[0];
               }
+              // All feature names of the response, needed to clean up objects of filtered features
+              const allFeatures = Array.isArray(data) ? data.map(item => item.feature) : [];
               // Filter features by path pattern if featureFilter is configured
               if (this.config.featureFilter && Array.isArray(data)) {
                 const patterns = this.config.featureFilter.replace(/\s/g, '').split(',').filter(p => p);
                 if (patterns.length > 0) {
                   const originalCount = data.length;
-                  data = data.filter(item => {
-                    const featurePath = item.feature || '';
-                    return patterns.some(pattern => {
-                      if (pattern.endsWith('*')) {
-                        // Wildcard: heating.* matches heating, heating.boiler, heating.burner, etc.
-                        let prefix = pattern.slice(0, -1);
-                        // Remove trailing dot to get base path
-                        if (prefix.endsWith('.')) {
-                          prefix = prefix.slice(0, -1);
-                        }
-                        // Match base path exactly OR as prefix with dot separator
-                        return featurePath === prefix || featurePath.startsWith(prefix + '.');
-                      }
-                      // Exact match
-                      return featurePath === pattern;
-                    });
-                  });
+                  data = data.filter(item => this.matchesFeature(item.feature || '', patterns));
                   this.log.debug(`Feature filter: ${originalCount} -> ${data.length} features`);
                 }
               }
@@ -432,6 +436,25 @@ class Viessmannapi extends utils.Adapter {
                 data = data.filter(item => !item.feature || !item.feature.startsWith('device.messages.logbook'));
               }
               const extractPath = installation.id + '.' + device.id + '.' + element.path;
+              if (Array.isArray(data)) {
+                // Drop features matching the blocklist
+                const blocklist = (this.config.featureBlocklist || '').replace(/\s/g, '').split(',').filter(p => p);
+                if (blocklist.length > 0) {
+                  const originalCount = data.length;
+                  data = data.filter(item => !this.matchesFeature(item.feature || '', blocklist));
+                  this.log.debug(`Feature blocklist: ${originalCount} -> ${data.length} features`);
+                }
+                if (this.config.skipMetadata) {
+                  data.forEach(item => this.hideMetadata(item));
+                }
+                // Once at adapter start: first remove the objects which the filters exclude from now on
+                if (ignoreFilter && this.config.deleteFiltered) {
+                  const keptFeatures = data.map(item => item.feature);
+                  return this.deleteFilteredFeatures(extractPath, allFeatures, keptFeatures).then(() => {
+                    this.extractKeys(this, extractPath, data, 'feature', null, false, element.desc);
+                  });
+                }
+              }
               const forceIndex = null;
 
               this.extractKeys(this, extractPath, data, 'feature', forceIndex, false, element.desc);
@@ -471,6 +494,148 @@ class Viessmannapi extends utils.Adapter {
             });
         }
       }
+    }
+  }
+  /**
+   * Checks a feature name against a list of patterns (exact name or prefix with trailing *)
+   * @param {string} featurePath
+   * @param {string[]} patterns
+   */
+  matchesFeature(featurePath, patterns) {
+    return patterns.some(pattern => {
+      if (pattern.endsWith('*')) {
+        // Wildcard: heating.* matches heating, heating.boiler, heating.burner, etc.
+        let prefix = pattern.slice(0, -1);
+        // Remove trailing dot to get base path
+        if (prefix.endsWith('.')) {
+          prefix = prefix.slice(0, -1);
+        }
+        // Match base path exactly OR as prefix with dot separator
+        return featurePath === prefix || featurePath.startsWith(prefix + '.');
+      }
+      // Exact match
+      return featurePath === pattern;
+    });
+  }
+  /**
+   * Hides the descriptive keys of a feature, so that extractKeys creates no states for them.
+   * The keys stay readable: the channel is still named by "feature" and setValue is still built from "params".
+   * @param {Record<string, any>} feature
+   */
+  hideMetadata(feature) {
+    const hide = (obj, keys) => {
+      for (const key of keys) {
+        if (obj && typeof obj === 'object' && Object.prototype.hasOwnProperty.call(obj, key)) {
+          Object.defineProperty(obj, key, { enumerable: false });
+        }
+      }
+    };
+    hide(feature, FEATURE_META_KEYS);
+    if (feature && feature.properties && typeof feature.properties === 'object') {
+      Object.values(feature.properties).forEach(property => hide(property, ['type']));
+    }
+    if (feature && feature.commands && typeof feature.commands === 'object') {
+      Object.values(feature.commands).forEach(command => hide(command, ['name', 'params']));
+    }
+  }
+  /**
+   * Tells if a path below a feature channel is one of the keys hidden by hideMetadata
+   * @param {string[]} sub path below the feature channel, split at the dots
+   */
+  isMetadataPath(sub) {
+    if (sub.length === 1) {
+      return FEATURE_META_KEYS.includes(sub[0]);
+    }
+    if (sub[0] === 'properties') {
+      return sub.length === 3 && sub[2] === 'type';
+    }
+    if (sub[0] === 'commands') {
+      return (sub.length === 3 && sub[2] === 'name') || (sub.length >= 3 && sub[2] === 'params');
+    }
+    return false;
+  }
+  /**
+   * Deletes the objects of one device which belong to filtered features or to hidden metadata
+   * @param {string} path object path of the features channel of the device
+   * @param {string[]} allFeatures names of all features delivered by the API
+   * @param {string[]} keptFeatures names of the features left after filtering
+   */
+  async deleteFilteredFeatures(path, allFeatures, keptFeatures) {
+    const toId = name => String(name).replace(/;/g, '_');
+    const all = new Set(allFeatures.filter(name => name).map(toId));
+    const kept = new Set(keptFeatures.filter(name => name).map(toId));
+    await this.deleteObjects(path, relativeId => {
+      const parts = relativeId.split('.');
+      // The feature an object belongs to is the longest feature name its id starts with
+      for (let i = parts.length; i > 0; i--) {
+        const owner = parts.slice(0, i).join('.');
+        if (!all.has(owner)) {
+          continue;
+        }
+        const sub = parts.slice(i);
+        if (sub.length > 0 && !FEATURE_OWN_KEYS.includes(sub[0])) {
+          // leftover of a nested feature the API does not deliver any more: do not touch
+          return false;
+        }
+        if (!kept.has(owner)) {
+          return true;
+        }
+        return !!this.config.skipMetadata && this.isMetadataPath(sub);
+      }
+      return false;
+    });
+  }
+  /**
+   * Deletes objects below a path. Objects with custom settings (e.g. history) are never deleted,
+   * and no object is deleted while one of its children stays.
+   * @param {string} path object path without namespace
+   * @param {(relativeId: string) => boolean} [shouldDelete] selects the objects to delete, default: all
+   */
+  async deleteObjects(path, shouldDelete) {
+    try {
+      const root = this.namespace + '.' + path.replace(/;/g, '_');
+      const list = await this.getObjectListAsync({ startkey: root, endkey: root + '.\u9999' });
+      const rows = list.rows.filter(row => row.id === root || row.id.startsWith(root + '.'));
+      const parentsOf = id => {
+        const parents = [];
+        for (let pos = id.lastIndexOf('.'); pos >= root.length; pos = id.lastIndexOf('.')) {
+          id = id.substring(0, pos);
+          parents.push(id);
+        }
+        return parents;
+      };
+      const hasChildren = new Set();
+      rows.forEach(row => parentsOf(row.id).forEach(id => hasChildren.add(id)));
+      // An object stays if it is not selected, and so do all its parents.
+      // A channel which is not selected stays only if it is empty already or one of its children stays.
+      const keep = new Set();
+      for (const row of rows) {
+        const obj = row.value || {};
+        let selected = !shouldDelete || shouldDelete(row.id.substring(root.length + 1));
+        if (selected && obj.common && obj.common.custom && Object.keys(obj.common.custom).length > 0) {
+          this.log.warn('Keep ' + row.id + ' because it has custom settings (e.g. history)');
+          selected = false;
+        }
+        const isContainer = obj.type === 'channel' || obj.type === 'folder' || obj.type === 'device';
+        if (!selected && (!isContainer || !hasChildren.has(row.id))) {
+          keep.add(row.id);
+          parentsOf(row.id).forEach(id => keep.add(id));
+        }
+      }
+      const ids = rows.map(row => row.id).filter(id => !keep.has(id));
+      // children first
+      ids.sort((a, b) => b.length - a.length);
+      for (const id of ids) {
+        this.log.debug('Deleting filtered object: ' + id);
+        await this.delForeignObjectAsync(id).catch(error => {
+          this.log.warn('Could not delete ' + id + ': ' + error);
+        });
+      }
+      if (ids.length > 0) {
+        this.log.info(`Deleted ${ids.length} filtered objects below ${path}`);
+      }
+    } catch (error) {
+      this.log.warn('Could not delete filtered objects below ' + path + ': ' + error);
     }
   }
   async getEvents() {

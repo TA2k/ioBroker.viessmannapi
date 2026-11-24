@@ -65,4 +65,22 @@ systemDictionary = {
       uk: 'Список ідентифікаторів, які дозволяють оновити для запобігання обмеження швидкості з ViCare Einzelraumsteuerung. Приклад: 0, HeatDemandControl',
       'zh-cn': '允许更新的开发者名单,以防止与维克雷·埃斯利拉姆特森松的汇率限制。 例:00',
     },
+  'Feature blocklist (comma-separated). Use * as wildcard. Example: device.messages.*': {
+    en: 'Feature blocklist (comma-separated). Use * as wildcard. Example: device.messages.*',
+    de: 'Ausschlussliste für Features (kommagetrennt). * als Platzhalter am Ende. Beispiel: device.messages.*',
+  },
+  'Only values and commands: create no states for feature metadata (feature, gatewayId, deviceId, apiVersion, isEnabled, isReady, uri, type of a property, name and params of a command).':
+    {
+      en: 'Only values and commands: create no states for feature metadata (feature, gatewayId, deviceId, apiVersion, isEnabled, isReady, uri, type of a property, name and params of a command).',
+      de: 'Nur Werte und Befehle: keine Datenpunkte für Feature-Metadaten anlegen (feature, gatewayId, deviceId, apiVersion, isEnabled, isReady, uri, type einer Eigenschaft, name und params eines Befehls).',
+    },
+  'Do not fetch gateway events.': {
+    en: 'Do not fetch gateway events.',
+    de: 'Gateway-Ereignisse (events) nicht abrufen.',
+  },
+  'Delete existing objects at adapter start which are excluded by the settings above. Objects with custom settings (e.g. history) are kept.':
+    {
+      en: 'Delete existing objects at adapter start which are excluded by the settings above. Objects with custom settings (e.g. history) are kept.',
+      de: 'Vorhandene Objekte, die durch die Einstellungen oben ausgeschlossen sind, beim Adapterstart löschen. Objekte mit eigenen Einstellungen (z. B. History) bleiben erhalten.',
+    },
 };
