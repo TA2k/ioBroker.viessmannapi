@@ -30,3 +30,26 @@ label > i[title] {
 }
 
 /* Add your styles here */
+/* Long labels: show every label above its field instead of floating over it */
+.m .input-field {
+    display: flex;
+    flex-direction: column;
+}
+.m .input-field > label {
+    position: static;
+    order: -1;
+    height: auto;
+    transform: none !important;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+/* Checkboxes: let long labels wrap instead of overlapping the next row */
+.m .input-field > input[type='checkbox'] + span,
+.m .input-field > input[type='checkbox'] + label {
+    position: relative;
+    order: 0;
+    height: auto;
+    min-height: 25px;
+    font-size: 1rem;
+    line-height: 25px;
+}
