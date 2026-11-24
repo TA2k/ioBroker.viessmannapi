@@ -1,0 +1,287 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items": {
+        "tabAccess": {
+            "type": "panel",
+            "label": "Access",
+            "items": {
+                "_headerAccount": {
+                    "type": "header",
+                    "newLine": true,
+                    "size": 2,
+                    "text": "Viessmann account",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "_accountInfo": {
+                    "type": "staticText",
+                    "newLine": true,
+                    "text": "The adapter needs a client ID from the Viessmann developer portal. Create a client there with the name \"iobroker\", Google reCAPTCHA deactivated and the redirect URI http://localhost:4200/ and enter its client ID here.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "_portalLink": {
+                    "type": "staticLink",
+                    "newLine": true,
+                    "button": true,
+                    "variant": "outlined",
+                    "icon": "web",
+                    "href": "https://app.developer.viessmann-climatesolutions.com/",
+                    "label": "Open the Viessmann developer portal",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 10,
+                    "lg": 8,
+                    "xl": 6
+                },
+                "client_id": {
+                    "type": "text",
+                    "newLine": true,
+                    "label": "Client ID",
+                    "help": "A new client ID can take up to 15 minutes until it works.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 10,
+                    "lg": 8,
+                    "xl": 6
+                },
+                "username": {
+                    "type": "text",
+                    "newLine": true,
+                    "label": "User name (e-mail address)",
+                    "help": "Login of the Viessmann / ViCare account",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 10,
+                    "lg": 8,
+                    "xl": 6
+                },
+                "password": {
+                    "type": "password",
+                    "newLine": true,
+                    "visible": true,
+                    "label": "Password",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 10,
+                    "lg": 8,
+                    "xl": 6
+                }
+            }
+        },
+        "tabPolling": {
+            "type": "panel",
+            "label": "Polling",
+            "items": {
+                "_headerPolling": {
+                    "type": "header",
+                    "newLine": true,
+                    "size": 2,
+                    "text": "Which devices are polled and how often",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "interval": {
+                    "type": "number",
+                    "newLine": true,
+                    "min": 0.5,
+                    "step": 0.5,
+                    "label": "Update interval in minutes",
+                    "help": "Every update costs one API call per device. The free Viessmann plan allows 1450 calls per day.",
+                    "tooltip": "Example: one device every 2 minutes = 720 calls per day. The minimum is 0.5 minutes.",
+                    "xs": 12,
+                    "sm": 8,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "devicelist": {
+                    "type": "text",
+                    "newLine": true,
+                    "label": "Only these devices (allowlist)",
+                    "help": "Device IDs separated by commas, for example: 0, HeatDemandControl. Empty: all devices.",
+                    "tooltip": "The device ID is the name of the folder directly below the installation number. Fewer devices mean fewer API calls, which helps against the rate limit, for example with the ViCare single room control.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 10,
+                    "lg": 8,
+                    "xl": 6
+                },
+                "allowVirtual": {
+                    "type": "checkbox",
+                    "newLine": true,
+                    "label": "Also update virtual devices regularly",
+                    "help": "For example RoomControl. Without this option they are read only once at adapter start.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "gatewayIndex": {
+                    "type": "number",
+                    "newLine": true,
+                    "min": 1,
+                    "step": 1,
+                    "label": "Gateway number",
+                    "help": "Only relevant for installations with several gateways. 1 = first online gateway.",
+                    "xs": 12,
+                    "sm": 8,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 3
+                }
+            }
+        },
+        "tabDataPoints": {
+            "type": "panel",
+            "label": "Data points",
+            "items": {
+                "_dataPointInfo": {
+                    "type": "staticText",
+                    "newLine": true,
+                    "text": "The Viessmann API delivers thousands of data points. The settings on this page reduce their number. The paths of the remaining data points do not change.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "_headerFeatures": {
+                    "type": "header",
+                    "newLine": true,
+                    "size": 2,
+                    "text": "Select features",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "featureFilter": {
+                    "type": "text",
+                    "newLine": true,
+                    "label": "Only these features (allowlist)",
+                    "help": "Separated by commas, * allowed at the end. Example: heating.dhw.*, heating.circuits.0.*  Empty: all features.",
+                    "tooltip": "A feature is the path below \"features\", for example heating.dhw.temperature.main. \"heating.dhw.*\" matches heating.dhw and everything below it. Without * the name must match exactly.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 10,
+                    "lg": 8,
+                    "xl": 6
+                },
+                "featureBlocklist": {
+                    "type": "text",
+                    "newLine": true,
+                    "label": "Not these features (blocklist)",
+                    "help": "Separated by commas, * allowed at the end. Example: device.messages.*",
+                    "tooltip": "Applied after the allowlist. Handy to drop single large groups, such as the message lists below device.messages, and keep everything else.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 10,
+                    "lg": 8,
+                    "xl": 6
+                },
+                "_headerMetadata": {
+                    "type": "header",
+                    "newLine": true,
+                    "size": 2,
+                    "text": "Metadata",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "skipMetadata": {
+                    "type": "checkbox",
+                    "newLine": true,
+                    "label": "Only values and commands (no metadata)",
+                    "help": "No data points for feature, gatewayId, deviceId, apiVersion, isEnabled, isReady, uri, the type of a property and the name and params of a command.",
+                    "tooltip": "Values (properties), timestamp and commands (uri, isExecutable, setValue) stay. For a heat pump this removes about half of all data points.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "_headerEvents": {
+                    "type": "header",
+                    "newLine": true,
+                    "size": 2,
+                    "text": "Gateway events",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "disableEvents": {
+                    "type": "checkbox",
+                    "newLine": true,
+                    "label": "Do not fetch gateway events",
+                    "help": "The folder \"events\" often contains more than a thousand data points.",
+                    "tooltip": "Events are the history of the installation, for example status changes and error messages. They are not needed for values and commands.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "eventInterval": {
+                    "type": "number",
+                    "newLine": true,
+                    "min": 0.5,
+                    "step": 0.5,
+                    "hidden": "data.disableEvents",
+                    "label": "Update interval for events in minutes",
+                    "help": "Every update costs one API call.",
+                    "xs": 12,
+                    "sm": 8,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "_headerCleanup": {
+                    "type": "header",
+                    "newLine": true,
+                    "size": 2,
+                    "text": "Clean up",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "deleteFiltered": {
+                    "type": "checkbox",
+                    "newLine": true,
+                    "label": "Delete filtered data points at adapter start",
+                    "help": "Deletes existing data points which the settings on this page exclude, also the features of devices outside the device allowlist. Data points with own settings (for example history) are kept.",
+                    "tooltip": "Without this option filtered data points stay with their last value and are not updated any more. If a filter is switched off again, the adapter creates the data points again at its next start.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "confirm": {
+                        "condition": "data.deleteFiltered",
+                        "title": "Delete data points?",
+                        "text": "After saving, the adapter restarts and deletes all data points which the settings on this page exclude. Scripts and visualisations that use them will no longer get values.",
+                        "type": "warning"
+                    }
+                }
+            }
+        }
+    }
+}

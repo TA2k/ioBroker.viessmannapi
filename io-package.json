@@ -4,8 +4,8 @@
     "version": "2.6.0",
     "news": {
       "2.6.0": {
-        "en": "optional filters to reduce the number of objects: feature blocklist, skip metadata states, disable events, delete filtered objects",
-        "de": "Optionale Filter zur Reduzierung der Objekte: Feature-Ausschlussliste, Metadaten-Datenpunkte weglassen, Events abschalten, gefilterte Objekte löschen"
+        "en": "optional filters to reduce the number of objects: feature blocklist, skip metadata states, disable events, delete filtered objects; new settings page (jsonConfig) with grouped options and help texts",
+        "de": "Optionale Filter zur Reduzierung der Objekte: Feature-Ausschlussliste, Metadaten-Datenpunkte weglassen, Events abschalten, gefilterte Objekte löschen; neue Einstellungsseite (jsonConfig) mit gruppierten Optionen und Hilfetexten"
       },
       "2.5.0": {
         "en": "reduce unused states",
@@ -133,7 +133,9 @@
     "compact": true,
     "connectionType": "cloud",
     "dataSource": "poll",
-    "materialize": true,
+    "adminUI": {
+      "config": "json"
+    },
     "plugins": {
       "sentry": {
         "dsn": "https://d5990d8661fb46988e641bca0e3d4e38@sentry.iobroker.net/147"
@@ -146,7 +148,7 @@
     ],
     "globalDependencies": [
       {
-        "admin": ">=4.0.9"
+        "admin": ">=6.17.14"
       }
     ]
   },
