@@ -26,6 +26,7 @@ const axios = require('axios');
 const crypto = require('crypto');
 const qs = require('qs');
 const { extractKeys } = require('./lib/extractKeys');
+const { parseCommandValue } = require('./lib/commandValue');
 
 // Keys of a feature that only describe it and never carry a value (see option "skipMetadata")
 const FEATURE_META_KEYS = ['feature', 'gatewayId', 'deviceId', 'apiVersion', 'isEnabled', 'isReady', 'uri'];
@@ -793,10 +794,7 @@ class Viessmannapi extends utils.Adapter {
         const param = idState.common.param;
         if (param) {
           if (typeof param !== 'object' || !Array.isArray(param)) {
-            data[param] = state.val;
-            if (!isNaN(Number(state.val))) {
-              data[param] = Number(state.val);
-            }
+            data[param] = parseCommandValue(state.val);
           } else {
             try {
               const stateval = JSON.parse(String(state.val));
