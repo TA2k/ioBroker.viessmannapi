@@ -131,6 +131,10 @@ Hinweise:
 - Wird eine Option wieder abgeschaltet, legt der Adapter die Datenpunkte beim nächsten Start wieder an.
 
 ## Changelog
+### **WORK IN PROGRESS**
+
+- fix: commands with a single object parameter (e.g. `setSchedule`) now send the JSON written to `setValue` as an object instead of a string; boolean parameters are no longer sent as 1/0
+
 ### 2.6.0 (2026-11-24)
 
 - optional filters to reduce the number of objects: feature blocklist, skip metadata states, disable events, delete filtered objects
