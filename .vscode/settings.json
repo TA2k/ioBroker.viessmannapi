@@ -5,7 +5,18 @@
             "fileMatch": [
                 "io-package.json"
             ],
-            "url": "https://json.schemastore.org/io-package"
+            "url": "https://raw.githubusercontent.com/ioBroker/ioBroker.js-controller/master/schemas/io-package.json"
+        },
+        {
+            "fileMatch": [
+                "admin/jsonConfig.json",
+                "admin/jsonCustom.json",
+                "admin/jsonTab.json",
+                "admin/jsonConfig.json5",
+                "admin/jsonCustom.json5",
+                "admin/jsonTab.json5"
+            ],
+            "url": "https://raw.githubusercontent.com/ioBroker/ioBroker.admin/master/packages/jsonConfig/schemas/jsonConfig.json"
         }
     ]
 }
